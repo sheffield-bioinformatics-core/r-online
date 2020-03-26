@@ -1,0 +1,671 @@
+---
+title: "R Crash Course"
+author: "Mark Dunning"
+date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
+output: 
+  html_notebook: 
+    toc: yes
+    toc_float: yes
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Introduction to R - Part II
+
+## Recap
+
+We should have loaded the `tidyverse` library and imported an example dataset into R
+
+```{r message=FALSE}
+library(tidyverse)
+gapminder <- read_csv("raw_data/gapminder.csv")
+```
+
+
+## Manipulating data
+
+We are going to use functions from the **`dplyr`** package (which is automatically loaded by loading the `tidyverse`) to **manipulate the data frame** we have just created. It is perfectly possible to work with data frames using the functions provided as part of "*base R*". However, many find it easy to read and write code using `dplyr`.
+
+There are **many more functions available in `dplyr`** than we will cover today. An overview of all functions is given in the following [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+
+### `select`ing columns
+
+
+We can **access the columns** of a data frame using the `select` function. 
+
+#### by name
+
+Firstly, we can select column by name, by adding bare column names after the name of the data frame, separated by a `,` . 
+
+```{r}
+select(gapminder, country, continent)
+```
+
+We can also remove columns from by putting a minus (`-`) in front of the column name.
+
+```{r}
+select(gapminder, -country)
+```
+
+#### range of columns
+
+A range of columns can be selected by the `:` operator.
+
+```{r}
+select(gapminder, lifeExp:gdpPercap)
+```
+
+#### helper functions 
+
+There are a number of helper functions can be employed if we are unsure about the exact name of the column.
+
+```{r}
+select(gapminder, starts_with("life"))
+select(gapminder, contains("pop"))
+select(gapminder, one_of("pop", "country"))
+```
+
+### Restricting rows with filter
+
+So far we have been returning all the rows in the output. We can use what we call a **logical test** to **filter the rows** in a data frame. This logical test will be applied to each row and give either a `TRUE` or `FALSE` result. When filtering, **only rows with a `TRUE` result get returned**.
+
+For example we filter for rows where the **`lifeExp` variable is less than 40**. 
+
+```{r}
+filter(gapminder, lifeExp < 40)
+```
+
+Internally, R creates a *vector* of `TRUE` or `FALSE`; one for each row in the data frame. This is then used to decide which rows to display.
+
+Testing for equality can be done using `==`. This will only give `TRUE` for entries that are *exactly* the same as the test string. 
+
+```{r}
+filter(gapminder, country == "Zambia")
+
+```
+
+N.B. For partial matches, the `grepl` function and / or *regular expressions* (if you know them) can be used.
+
+```{r}
+filter(gapminder, grepl("land", country))
+```
+
+We can also test if rows are *not* equal to a value using  `!=` 
+
+```{r}
+filter(gapminder, continent != "Europe")
+
+```
+
+#### testing more than one condition
+
+There are a couple of ways of testing for more than one pattern. The first uses an *or* `|` statement. i.e. testing if the value of `country` is `Zambia` *or* the value is `Zimbabwe`. Remember to use double `=` sign to test for string equality; `==`.
+
+
+```{r}
+filter(gapminder, country == "Zambia" | country == "Zimbabwe")
+```
+
+
+The `%in%` function is a convenient function for testing which items in a vector correspond to a defined set of values.
+
+```{r}
+filter(gapminder, country %in% c("Zambia", "Zimbabwe"))
+```
+
+
+We can require that both tests are `TRUE`,  e.g. which years in Zambia had a life expectancy less than 40, by:
+
+- using an *and* `&` operation.
+
+```{r}
+filter(gapminder, country == "Zambia" & lifeExp < 40)
+
+```
+Or just by separating conditional statemnets by a `,`
+
+```{r}
+filter(gapminder, country == "Zambia", lifeExp < 40)
+```
+
+
+******
+******
+******
+
+#### Exercise
+
+- Create a subset of the data where the population less than a million in the year 2002
+- Create a subset of the data where the life expectancy is greater than 75 in the years prior to 1987
+- (EXTRA)
+- Data for countries whose name begins with the letter `Z`. You might want to investigate the usage of the `substr` function.
+
+
+******
+******
+******
+
+### manipulating column values
+
+As well as selecting existing columns in the data frame, new columns can be created and existing ones manipulated using the `mutate` function. Typically a function or mathematical expression to data in existing columns by row and the result either stored in a new column or reassigned to an existing one. In other words, the number of values returned by the function must be the same as the number of input values. Multiple mutations can be performed in one call.
+
+Here, we create a new column of population in millions (`PopInMillions`) and round `lifeExp` to the nearest integer.
+
+```{r}
+mutate(gapminder, PopInMillions = pop / 1e6,
+       lifeExp = round(lifeExp))
+
+```
+
+If we want to rename existing columns, and not create any extra columns, we can use the `rename` function.
+
+```{r}
+rename(gapminder, GDP=gdpPercap)
+```
+
+
+### Ordering and sorting
+
+The whole data frame can be re-ordered according to the values in one column using the `arrange` function. So to order the table according to population size:-
+
+```{r}
+arrange(gapminder, pop)
+```
+
+
+The default is `smallest --> largest` by we can change this using the `desc` function
+
+```{r}
+arrange(gapminder, desc(pop))
+```
+
+`arrange` also works on character vectors, arrange them alpha-numerically.
+
+```{r}
+arrange(gapminder, desc(country))
+```
+
+We can even order by more than one condition
+
+```{r}
+arrange(gapminder, year, pop)
+```
+
+
+
+
+### saving data frames
+
+A final point on data frames is that we can **write them to disk once we have done our data processing**. 
+
+Let's create a folder in which to store such processed, analysis ready data
+
+```{r, warning=FALSE, message=FALSE}
+dir.create("data")
+```
+
+
+```{r}
+byWealth <- arrange(gapminder, desc(gdpPercap))
+head(byWealth)
+write_csv(byWealth, path = ("data/by_wealth.csv"))
+```
+
+We will now try an exercise that involves using several steps of these operations
+
+******
+******
+******
+
+#### Exercise
+
+- Filter the data to include just observations from the year 2002
+- Re-arrange the table so that the countries from each continent are ordered according to decreasing wealth. i.e. the wealthiest countries first
+- Remove the year column from the resulting data frame
+- Write the data frame out to a file in `data/` folder
+
+```{r echo=FALSE}
+filter(gapminder, year==2002) %>% 
+  arrange(continent, desc(gdpPercap)) %>% 
+  select(-year)
+
+
+```
+
+
+******
+******
+******
+
+
+### "Piping"
+
+We will **often need to perform an analysis, or clean a dataset, using several `dplyr` functions in sequence**. e.g. filtering, mutating, then selecting columns of interest (possibly followed by plotting - see later).
+
+If we wanted to filter our results to just Europe and then also remove the now somewhat unnecessary `continent` column.
+
+The following is perfectly valid R code, but invites the user to make mistakes when writing it. We also have to create multiple copies of the same data frame.
+
+```{r}
+tmp <- filter(gapminder, continent == "Europe")
+tmp2 <- select(tmp, -continent)
+tmp2
+```
+
+Those familiar with Unix may recall that commands can be joined with a pipe; `|`
+
+In R, `dplyr` commands to be linked together and form a workflow. The symbol `%>%` is pronounced **then**. With a `%>% ` the input to a function is assumed to be the output of the previous line. All the `dplyr` functions that we have seen so far take a data frame as an input and return an altered data frame as an output, so are ameanable to this type of programming.
+
+The example we gave of filtering just the European countries and removing the `continent` column becomes:-
+
+*notice that in the `select` statement we don't need to specify the name of the data frame*
+
+```{r}
+filter(gapminder, continent=="Europe") %>% 
+  select(-continent)
+
+```
+
+We can join as many `dplyr` functions as we require for the analysis.
+
+```{r}
+filter(gapminder, continent=="Europe") %>% 
+  select(-continent) %>% 
+  mutate(lifeExp = round(lifeExp)) %>% 
+  arrange(year, lifeExp) %>% 
+  select(country, year:lifeExp) %>% 
+  write_csv(path = "data/europe_by_lifeExp.csv")
+
+```
+
+
+# Plotting
+
+The R language has extensive graphical capabilities.
+
+Graphics in R may be created by many different methods including base graphics and more advanced plotting packages such as lattice.
+
+The `ggplot2` package was created by Hadley Wickham and provides a intuitive plotting system to rapidly generate publication quality graphics.
+
+`ggplot2` builds on the concept of the “Grammar of Graphics” (Wilkinson 2005, Bertin 1983) which describes a consistent syntax for the construction of a wide range of complex graphics by a concise description of their components.
+
+## Why use ggplot2?
+
+The structured syntax and high level of abstraction used by ggplot2 should allow for the user to concentrate on the visualisations instead of creating the underlying code.
+
+On top of this central philosophy ggplot2 has:
+
+- Increased flexibility over many plotting systems.
+- An advanced theme system for professional/publication level graphics.
+- Large developer base – Many libraries extending its flexibility.
+- Large user base – Great documentation and active mailing list.
+
+
+It is always useful to think about the message you want to convey and the appropriate plot before writing any R code. Resources like [this](https://www.data-to-viz.com/) should help.
+
+With some practice, `ggplot2` makes it easier to go from the figure you are imagining in our head (or on paper) to a publication-ready image in R.
+
+As with `dplyr`, we won't have time to cover all details of `ggplot2`. This is however a useful [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) that can be printed as a reference.
+
+## Basic plot types
+
+A plot in `ggplot2` is created with the following type of command
+
+```
+ggplot(data = <DATA>, mapping = aes(<MAPPINGS>)) +  <GEOM_FUNCTION>()
+```
+
+So we need to specify
+
+- The data to be used in graph
+- Mappings of data to the graph (*aesthetic* mapping)
+- What type of graph we want to use (The *geom* to use).
+
+Lets say that we want to explore the relationship between GDP and Life Expectancy. We might start with the hypothesis that richer countries have higher life expectancy. A sensible choice of plot would be a *scatter plot* with gdp on the x-axis and life expectancy on the y-axis.
+
+The first stage is to specify our dataset
+
+```{r}
+library(ggplot2)
+ggplot(data = gapminder)
+```
+
+For the aesthetics, as a bare minimum we will map the `gdpPercap` and `lifeExp` to the x- and y-axis of the plot. Some progress is made; we at least get axes
+
+```{r}
+ggplot(data = gapminder,aes(x=gdpPercap, y=lifeExp))
+```
+
+That created the axes, but we still need to define how to display our points on the plot. As we have continuous data for both the x- and y-axis, `geom_point` is a good choice.
+
+```{r}
+ggplot(data = gapminder,aes(x=gdpPercap, y=lifeExp)) + geom_point()
+```
+
+
+
+
+The *geom* we use will depend on what kind of data we have (continuous, categorical etc)
+
+- `geom_point()` - Scatter plots
+- `geom_line()` - Line plots
+- `geom_smooth()` - Fitted line plots
+- `geom_bar()` - Bar plots
+- `geom_boxplot()` - Boxplots
+- `geom_jitter()` - Jitter to plots
+- `geom_histogram()` - Histogram plots
+- `geom_density()` - Density plots
+- `geom_text()` - Text to plots
+- `geom_errorbar()` - Errorbars to plots
+- `geom_violin()` - Violin plots
+- `geom_tile()` - for "heatmap"-like plots
+
+
+Boxplots are commonly used to visualise the distributions of continuous data. We have to use a categorical variable on the x-axis. In the case of the `gapminder` data we might have to persuade `ggplot2` that the `year` column is a `factor` rather than numerical data.
+
+```{r}
+ggplot(gapminder, aes(x = as.factor(year), y=gdpPercap)) + geom_boxplot()
+```
+
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap)) + geom_histogram()
+```
+
+Counts with a barplot
+
+```{r}
+ggplot(gapminder, aes(x=continent)) + geom_bar()
+```
+
+The height of the bars can also be mapped directly to numeric variables in the data frame if the `stat="identity"` argument is set within `geom_bar`. Note that the axis labels can be modified, as we will see later on.
+
+```{r}
+gapminder2002 <- filter(gapminder, year==2002,continent=="Americas")
+ggplot(gapminder2002, aes(x=country,y=gdpPercap)) + geom_bar(stat="identity")
+```
+
+Where appropriate, we can add multiple layers of `geom`s to the plot. For instance, a criticism of the boxplot is that it does not show all the data. We can rectify this by overlaying the individual points.
+
+```{r}
+ggplot(gapminder, aes(x = as.factor(year), y=gdpPercap)) + geom_boxplot() + geom_point()
+```
+
+```{r}
+ggplot(gapminder, aes(x = as.factor(year), y=gdpPercap)) + geom_boxplot() + geom_jitter(width=0.1)
+```
+
+
+******
+******
+******
+
+### Exercises
+
+
+- The violin plot is a popular alternative to the boxplot. Create a violin plot with `geom_violin` to visualise the increase in GDP over time.
+- Create a subset of the `gapminder` data frame containing just the rows for your country of birth
+- Has there been an increase in life expectancy over time?
+    + visualise the trend using a scatter plot (`geom_point`), line graph (`geom_line`) or smoothed line (`geom_smooth`).
+
+
+******
+******
+******
+
+
+### **Solutions**
+
+```{r}
+ggplot(gapminder, aes(x = as.factor(year), y = gdpPercap)) + geom_violin()
+
+```
+
+```{r}
+filter(gapminder, country=="United Kingdom") %>% 
+      ggplot(aes(x = year, y= lifeExp)) + geom_point()
+```
+
+```{r}
+## We can to keep factor as a numeric value (i.e. not convert to a factor) to make the plot
+
+filter(gapminder, country=="United Kingdom") %>% 
+      ggplot(aes(x = year, y= lifeExp)) + geom_line()
+```
+
+```{r}
+filter(gapminder, country=="United Kingdom") %>% 
+      ggplot(aes(x = year, y= lifeExp)) + geom_smooth()
+```
+
+
+As we have seen already, `ggplot` offers an interface to create many popular plot types. It is up to the user to decide what the best way to visualise the data.
+
+It is also up to the user how to interpret the data. Consider the following plot and what message it might be conveying. 
+
+![](images/good_correlation.png)
+
+However, when considering [the source of the plot](http://www.tylervigen.com/spurious-correlations) your interpretation might change.
+
+## Customising the plot appearance
+
+Our plots are a bit dreary at the moment, but one way to add colour is to add a `col` argument to the `geom_point` function. The value can be any of the pre-defined colour names in R. These are displayed in this [handy online reference](http://www.stat.columbia.edu/~tzheng/files/Rcolor.pdf). *R*ed, *G*reen, *B*lue of *Hex* values can also be given.
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap, y=lifeExp)) + geom_point(col="red")
+```
+
+However, a powerful feature of `ggplot2` is that colours are treated as aesthetics of the plot. In other words we can use column in our dataset.
+
+Let's say that we want points on our plot to be coloured according to continent. We add an extra argument to the definition of aesthetics to define the mapping. `ggplot2` will even decide on colours and create a legend for us.
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point()
+```
+
+
+
+<div class="alert alert-warning">
+
+**Question: Can you explain why the colour scheme used on the following two plots are different**
+
+</div>
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,col=year)) + geom_point()
+ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,col=as.factor(year))) + geom_point()
+```
+
+Shape and size of points can also be mapped from the data. However, it is easy to get carried away.
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,shape=continent,size=pop,col=as.factor(year))) + geom_point()
+```
+
+Scales and their legends have so far been handled using ggplot2 defaults. ggplot2 offers functionality to have finer control over scales and legends using the scale methods.
+
+Scale methods are divided into functions by combinations of
+
+- the aesthetics they control.
+
+- the type of data mapped to scale.
+
+`scale_`*aesthetic*_*type*
+
+Try typing in `scale_` then tab to autocomplete. This will provide some examples of the scale functions available in `ggplot2`.
+
+Although different scale functions accept some variety in their arguments, common arguments to scale functions include -
+
+- name - The axis or legend title
+
+- limits - Minimum and maximum of the scale
+
+- breaks - Label/tick positions along an axis
+
+- labels - Label names at each break
+
+- values - the set of aesthetic values to map data values
+
+We can choose specific colour palettes, such as those provided by the `RColorBrewer` package. This package provides palettes for different types of scale (sequential, diverging, qualitative).
+
+```{r}
+library(RColorBrewer)
+display.brewer.all()
+```
+
+When experimenting with colour palettes and labels, it is useful to save the plot as an object
+```{r}
+p <- ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point()
+```
+
+
+```{r}
+p + scale_color_brewer(palette = "Set2")
+```
+
+Or we can even specify our own colours; such as The University of Sheffield branding colours
+
+```{r}
+my_pal <- c(rgb(0,159,218,maxColorValue = 255),
+            rgb(31,20,93,maxColorValue = 255),
+            rgb(249,227,0,maxColorValue = 255),
+            rgb(0,155,72,maxColorValue = 255),
+            rgb(190,214,0,maxColorValue = 255))
+p + scale_color_manual(values=my_pal)
+
+```
+
+
+
+Various labels can be modified using the `labs` function.
+
+```{r}
+p + labs(x="Wealth",y="Life Expectancy",title="Relationship between Wealth and Life Expectancy")
+```
+
+We can also modify the x- and y- limits of the plot so that any outliers are not shown. `ggplot2` will give a warning that some points are excluded.
+
+```{r}
+p + xlim(0,60000)
+```
+
+Saving is supported by the `ggsave` function.
+
+```{r}
+
+ggsave(p, file="my_ggplot.png")
+```
+
+Most aspects of the plot can be modified from the background colour to the grid sizes and font. Several pre-defined "themes" exist and we can modify the appearance of the whole plot using a `theme_..` function.
+
+```{r}
+p + theme_bw()
+```
+
+More themes are supported by the `ggthemes` package. You can make your plots look like the Economist, Wall Street Journal or Excel (**but please don't do this!**)
+
+## Facets
+
+One very useful feature of ggplot is faceting. This allows you to produce plots subset by variables in your data. In the scatter plot above, it was quite difficult to see if the relationship between gdp and life expectancy was the same for each continent. To overcome this, we would like a see a separate plot for each continent.
+
+To facet our data into multiple plots we can use the `facet_wrap` or `facet_grid` function and specify the variable we split by. 
+
+```{r}
+p + facet_wrap(~continent)
+
+```
+
+The `facet_grid` function will create a grid-like plot with one variable on the x-axis and another on the y-axis.
+
+```{r fig.width=12}
+p + facet_grid(continent~year)
+```
+
+
+The previous plot was a bit messy as it contained all combinations of year and continent. Let's suppose we want our analysis to be a bit more focussed and disregard countries in Oceania (as there are only 2 in our dataset) and years between 1997 and 2002. We should know how to restrict the rows from the `gapminder` dataset using the `filter` function. Instead of filtering the data, creating a new data frame and construcing the data frame from these new data we can use the` %>%` operator to create the data frame on the fly and pass directly to `ggplot`. Thus we don't have to save a new data frame or alter the original data.
+
+
+```{r fig.width=12}
+filter(gapminder, continent!="Oceania", year %in% c(1997,2002,2007)) %>% 
+  ggplot(aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point() + facet_grid(continent~year)
+```
+
+## Adding text to a plot
+
+Annotations can be added to a plot using the flexible `annotate` function documented [here](https://ggplot2.tidyverse.org/reference/annotate.html). This presumes that you know the coordinates that you want to add the annotations at.
+
+```{r}
+p<- ggplot(gapminder, aes(x = gdpPercap, y = lifeExp,col=continent)) + geom_point()
+p + annotate("text", x = 90000,y=60, label="Some text")
+
+
+```
+
+Highlighting particular poins of interest using a rectangle.
+
+```{r}
+p + annotate("rect", xmin=25000, xmax=120000,ymin=50,ymax=75,alpha=0.2)
+```
+
+
+We can also map directly from a column in our dataset to the `label` aesthetic. However, this will label all the points which is rather cluttered in our case
+
+```{r}
+ggplot(gapminder, aes(x = gdpPercap, y = lifeExp,col=continent,label=country)) + geom_point() + geom_text()
+```
+
+Instead, we could use a different dataset when we create the text labels with `geom_text`. Here we filter the `gapminder` dataset to only countries with `gdpPercap` greater than `57000` and only these points get labelled. We can also set the text colours to a particular value rather than using the original colour mappings for the plot (based on continent).
+
+```{r}
+p + geom_text(data = filter(gapminder, gdpPercap > 57000), 
+              aes(x = gdpPercap, y = lifeExp,label=country),col="black")
+```
+
+```{r}
+p + geom_text(data = filter(gapminder, gdpPercap > 25000, lifeExp < 75), 
+              aes(x = gdpPercap, y = lifeExp,label=country),col="black",size=3) + annotate("rect", xmin=25000, xmax=120000,ymin=50,ymax=75,alpha=0.2)
+```
+
+
+## Comment about the axis scale
+
+The plot of `gdpPercap` vs `lifeExp` on the original scale seems to be influenced by the outlier observations (which we now know are observations from `Kuwait`). In such situations it may be possible to transform the scale of one axis for visualisation purposes. One such transformation is `log10`, which we can apply with the `scale_x_log10` function. Others include `scale_x_log2`, `scale_x_sqrt` and equivalents for the y axis.
+
+```{r}
+p + scale_x_log10()
+```
+
+By splitting the plot by continents we see more clearly which continents have a more linear relationship. At the moment this is useful for visualisation purposes, if we wanted to obtain summaries from the data we would need the techniques in the next section.
+
+```{r}
+p + scale_x_log10() + geom_smooth(method="lm",col="black") + facet_wrap(~continent)
+```
+
+******
+******
+******
+
+### Exercise
+
+- In a previous exercise we filtered the gapminder data to a particular country of interest, and then plotted the trend in life expectancy over time
+- Repeat this plot, but selecting three countries of interest and using piping `%>%` to avoid creating an intermediate data frame
+- Use a *facet* to split into separate plots 
+- See below for an example
+
+![](images/ggplot_example.png)
+
+******
+******
+******
+
+
+### **Solution**
+
+```{r}
+filter(gapminder, country %in% c("France","Spain","United Kingdom")) %>% 
+  ggplot(aes(x = year, y = lifeExp,col=country)) + geom_line() + facet_wrap(~country) + labs(x="Year", y = "Life Expectancy")
+```
+
+
+
+

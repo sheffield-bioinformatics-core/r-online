@@ -1,0 +1,189 @@
+---
+title: "R Crash Course"
+author: "Mark Dunning"
+date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
+output: 
+  html_notebook: 
+    toc: yes
+    toc_float: yes
+editor_options: 
+  chunk_output_type: inline
+---
+
+# Introduction to R - Part III
+
+## Recap
+
+```{r message=FALSE}
+library(tidyverse)
+gapminder <- read_csv("raw_data/gapminder.csv")
+```
+
+
+# Summarising and grouping with dplyr
+
+The `summarise` function can take any R function that takes a vector of values (i.e. a column from a data frame) and returns a single value. Some of the more useful functions include:
+
+- `min` minimum value
+- `max` maximum value
+- `sum` sum of values
+- `mean` mean value
+- `sd` standard deviation
+- `median` median value
+- `IQR` the interquartile range
+- `n_distinct` the number of distinct values
+- `n` the number of observations (Note: this is a special function that doesn’t take a vector argument, i.e. column)
+
+
+```{r}
+summarise(gapminder, min(lifeExp), max(gdpPercap), mean(pop))
+```
+
+It is also possible to summarise using a function that takes more than one value, i.e. from multiple columns. For example, we could compute the correlation between year and life expectancy. Here we also assign names to the table that is produced.
+
+```{r}
+gapminder %>% 
+summarise(MinLifeExpectancy = min(lifeExp), 
+          MaximumGDP = max(gdpPercap), 
+          AveragePop = mean(pop), 
+          Correlation = cor(year, lifeExp))
+```
+
+However, it is not particularly useful to calculate such values from the entire table as we have different continents and years. The `group_by` function allows us to split the table into different categories, and compute summary statistics for each year (for example).
+
+```{r}
+gapminder %>% 
+    group_by(year) %>% 
+    summarise(MinLifeExpectancy = min(lifeExp), 
+              MaximumGDP = max(gdpPercap), 
+              AveragePop = mean(pop))
+```
+
+Other summary statistics that can be useful include `first` and `last` which are used to report the first and last values for a particular group. For instance, we might want to look at the increase in wealth over time for each country by extracting their `gdpPercap` in `1952` and `2007`.
+
+```{r}
+gapminder %>% 
+  group_by(country) %>% 
+  arrange(year) %>% 
+summarise(StartGDP = first(gdpPercap), EndGDP = last(gdpPercap), GDPIncrease = EndGDP - StartGDP)
+
+```
+
+
+The nice thing about `summarise` is that it can followed up by any of the other `dplyr` verbs that we have met so far (`select`, `filter`, `arrange`..etc). 
+
+Returning to the correlation between life expectancy and year, we can summarise as follows:-
+
+```{r}
+gapminder %>%     
+    group_by(country) %>% 
+    summarise(Correlation = cor(year , lifeExp))
+```
+We can then arrange the table by the correlation to see which countries have the lowest correlation
+
+```{r}
+gapminder %>%      
+    group_by(country) %>% 
+    summarise(Correlation = cor(year , lifeExp)) %>% 
+    arrange(Correlation)
+```
+
+We can filter the results to find obsevations of interest
+
+```{r}
+gapminder %>%      
+    group_by(country) %>% 
+    summarise(Correlation = cor(year , lifeExp)) %>% 
+    filter(Correlation < 0)
+```
+
+The countries we identify could then be used as the basis for a plot.
+
+```{r}
+filter(gapminder, country %in% c("Rwanda","Zambia","Zimbabwe")) %>% 
+  ggplot(aes(x=year, y=lifeExp,col=country)) + geom_line()
+``` 
+
+******
+******
+******
+
+### Exercise 
+
+- Produce a plot to show the change in average `gdpPercap` for each continent over time.
+- see below for a suggestion
+    + HINT: you will need to specifiy the `geom_col` function to create the bar plot
+
+******
+******
+******
+
+
+
+
+```{r echo=FALSE}
+gapminder %>% group_by(year,continent) %>% 
+  summarise(Wealth=mean(gdpPercap)) %>% ggplot(aes(x=year,y=Wealth,fill=continent)) + geom_bar(stat="identity")  + facet_wrap(~continent)
+```
+
+
+# Joining
+
+In many real life situations, data are spread across multiple tables or spreadsheets. Usually this occurs because different types of information about a subject, e.g. a patient, are collected from different sources. It may be desirable for some analyses to combine data from two or more tables into a single data frame based on a common column, for example, an attribute that uniquely identifies the subject.
+
+`dplyr` provides a set of join functions for combining two data frames based on matches within specified columns. For those familiar with such SQL, these operations are very similar to carrying out join operations between tables in a relational database.
+
+As a toy example, lets consider two data frames that contain the names of various bands, and the instruments that they play:-
+```{r}
+band_instruments
+band_members
+```
+
+There are various ways in which we can join these two tables together. We will just consider the case of a "left join".
+
+![](images/left-join.gif)
+
+*Animated gif by Garrick Aden-Buie*
+
+`left_join` returns all rows from the first data frame regardless of whether there is a match in the second data frame. Rows with no match are included in the resulting data frame but have NA values in the additional columns coming from the second data frame.
+
+Animations to illustrate other types of join are available at [https://github.com/gadenbuie/tidy-animated-verbs](https://github.com/gadenbuie/tidy-animated-verbs)
+
+```{r}
+left_join(band_members, band_instruments)
+```
+
+`right_join` is similar but returns all rows from the second data frame that have a match with rows in the first data frame based on the specified column.
+
+```{r}
+right_join(band_members, band_instruments)
+```
+
+`inner_join` only returns those rows where matches could be made
+
+```{r}
+inner_join(band_members, band_instruments)
+```
+
+
+******
+******
+******
+
+
+
+### Exercise (open-ended)
+
+- The file `medal_table.csv` in the `raw_data/` project sub-directory contains data about how many medals how been won by various countries at the Beijing summer olympics of 2008.
+- Read this csv file into R and join with the `gapminder` data from 2007
+- What interesting summaries / plots can you make from the data? For example...
+  + what countries have the greatest proportion of gold medals (ignore countries with too few medals)
+  + calculate the number of medals won per million people and re-arrange by this new measure. What countries perform best?
+  + how similar is the distribution of total medals between continents?
+  + do countries with a larger population tend to win more medals?
+  + do countries with larger GDP tend to win more medals?
+  + are these trends consistent among different continents?
+  
+******
+******
+******
