@@ -16,39 +16,6 @@ These materials are adapted from a course developed at Cancer Research Uk Cambri
 
 # Introduction to R - Part I
 
-## RStudio
-
-
-
-- Rstudio is a free environment for R
-- Convenient menus to access scripts, display plots
-- Still need to use *command-line* to get things done
-- Developed by some of the leading R programmers
-- Used by beginners, and experienced users alike
-
-To get started, you will need to install the [latest version of R](https://cran.r-project.org/) and [RStudio Desktop](https://www.rstudio.com/products/rstudio/download3/); both of which are ***free***. 
-
-Once installed, you should be able to launch RStudio by clicking on its icon:-
-
-
-![](http://www.rstudio.com/wp-content/uploads/2014/03/blue-125.png)
-
-## Entering commands in R
-
-- The traditional way to enter R commands is via the Terminal, or using the console in RStudio (bottom-left panel when RStudio opens for first time).
-  + this doesn't automatically keep track of the steps you did
-- Alternative, an *R script* can be used to keep a record of the commands you used.
-- The R code can be run from inside the script and the results are displayed in the console or Viewer panel (eg plots)
-- Each line of R code can be executed by clicking on the line and pressing CTRL and ENTER
-- Let's try this now!
-
-<div class="alert alert-info">
-
-#### **File -> New File -> R script > ** 
-
-</div>
-
-
 ```{r}
 print("Hello World")
 ```
@@ -56,9 +23,6 @@ print("Hello World")
 
 # Getting started
 
-![](images/128px-SHARP_ELSIMATE_EL-W221.jpg)
-
-At a basic level, we can use R as a calculator to compute simple sums with the `+`, `-`, `*` (for multiplication) and `/` (for division) symbols. 
 
 ```{r}
 2 + 2
@@ -79,7 +43,6 @@ In the case of expressions involving multiple operations, R respects the [BODMAS
 
 R is capable of more complicated arithmetic such as trigonometry and logarithms; like you would find on a fancy scientific calculator. Of course, R also has a plethora of statistical operations as we will see.
 
-![](images/128px-Casio-fx115ES-5564.jpg)
 
 ```{r}
 pi

@@ -441,11 +441,8 @@ filter(gapminder, country=="United Kingdom") %>%
 
 As we have seen already, `ggplot` offers an interface to create many popular plot types. It is up to the user to decide what the best way to visualise the data.
 
-It is also up to the user how to interpret the data. Consider the following plot and what message it might be conveying. 
 
-![](images/good_correlation.png)
 
-However, when considering [the source of the plot](http://www.tylervigen.com/spurious-correlations) your interpretation might change.
 
 ## Customising the plot appearance
 
@@ -650,9 +647,6 @@ p + scale_x_log10() + geom_smooth(method="lm",col="black") + facet_wrap(~contine
 - In a previous exercise we filtered the gapminder data to a particular country of interest, and then plotted the trend in life expectancy over time
 - Repeat this plot, but selecting three countries of interest and using piping `%>%` to avoid creating an intermediate data frame
 - Use a *facet* to split into separate plots 
-- See below for an example
-
-![](images/ggplot_example.png)
 
 ******
 ******
@@ -661,10 +655,6 @@ p + scale_x_log10() + geom_smooth(method="lm",col="black") + facet_wrap(~contine
 
 ### **Solution**
 
-```{r}
-filter(gapminder, country %in% c("France","Spain","United Kingdom")) %>% 
-  ggplot(aes(x = year, y = lifeExp,col=country)) + geom_line() + facet_wrap(~country) + labs(x="Year", y = "Life Expectancy")
-```
 
 
 
