@@ -122,8 +122,9 @@ filter(gapminder, country %in% c("Rwanda","Zambia","Zimbabwe")) %>%
 
 
 ```{r echo=FALSE}
-gapminder %>% group_by(year,continent) %>% 
-  summarise(Wealth=mean(gdpPercap)) %>% ggplot(aes(x=year,y=Wealth,fill=continent)) + geom_bar(stat="identity")  + facet_wrap(~continent)
+
+
+
 ```
 
 

@@ -17,7 +17,7 @@ editor_options:
 We should have loaded the `tidyverse` library and imported an example dataset into R
 
 ```{r message=FALSE}
-library(tidyverse)
+library(readr)
 gapminder <- read_csv("raw_data/gapminder.csv")
 ```
 
@@ -27,6 +27,12 @@ gapminder <- read_csv("raw_data/gapminder.csv")
 We are going to use functions from the **`dplyr`** package (which is automatically loaded by loading the `tidyverse`) to **manipulate the data frame** we have just created. It is perfectly possible to work with data frames using the functions provided as part of "*base R*". However, many find it easy to read and write code using `dplyr`.
 
 There are **many more functions available in `dplyr`** than we will cover today. An overview of all functions is given in the following [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+
+
+```{r}
+library(dplyr)
+```
+
 
 ### `select`ing columns
 
@@ -137,13 +143,20 @@ filter(gapminder, country == "Zambia", lifeExp < 40)
 
 - Create a subset of the data where the population less than a million in the year 2002
 - Create a subset of the data where the life expectancy is greater than 75 in the years prior to 1987
-- (EXTRA)
-- Data for countries whose name begins with the letter `Z`. You might want to investigate the usage of the `substr` function.
+- Create a subset of the European data where the life expectancy is greater than 80 in the 2000s
 
 
 ******
 ******
 ******
+
+```{r}
+
+
+
+
+```
+
 
 ### manipulating column values
 
@@ -225,9 +238,7 @@ We will now try an exercise that involves using several steps of these operation
 - Write the data frame out to a file in `data/` folder
 
 ```{r echo=FALSE}
-filter(gapminder, year==2002) %>% 
-  arrange(continent, desc(gdpPercap)) %>% 
-  select(-year)
+
 
 
 ```
@@ -382,7 +393,7 @@ The height of the bars can also be mapped directly to numeric variables in the d
 
 ```{r}
 gapminder2002 <- filter(gapminder, year==2002,continent=="Americas")
-ggplot(gapminder2002, aes(x=country,y=gdpPercap)) + geom_bar(stat="identity")
+ggplot(gapminder2002, aes(x=country,y=gdpPercap)) + geom_col()
 ```
 
 Where appropriate, we can add multiple layers of `geom`s to the plot. For instance, a criticism of the boxplot is that it does not show all the data. We can rectify this by overlaying the individual points.
@@ -414,31 +425,14 @@ ggplot(gapminder, aes(x = as.factor(year), y=gdpPercap)) + geom_boxplot() + geom
 ******
 
 
-### **Solutions**
-
 ```{r}
-ggplot(gapminder, aes(x = as.factor(year), y = gdpPercap)) + geom_violin()
 
 ```
 
-```{r}
-filter(gapminder, country=="United Kingdom") %>% 
-      ggplot(aes(x = year, y= lifeExp)) + geom_point()
-```
 
-```{r}
-## We can to keep factor as a numeric value (i.e. not convert to a factor) to make the plot
 
-filter(gapminder, country=="United Kingdom") %>% 
-      ggplot(aes(x = year, y= lifeExp)) + geom_line()
-```
 
-```{r}
-filter(gapminder, country=="United Kingdom") %>% 
-      ggplot(aes(x = year, y= lifeExp)) + geom_smooth()
-```
 
-
 As we have seen already, `ggplot` offers an interface to create many popular plot types. It is up to the user to decide what the best way to visualise the data.
 
 
@@ -587,7 +581,35 @@ filter(gapminder, continent!="Oceania", year %in% c(1997,2002,2007)) %>%
   ggplot(aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point() + facet_grid(continent~year)
 ```
 
-## Adding text to a plot
+
+******
+******
+******
+
+### Exercise
+
+- In a previous exercise we filtered the gapminder data to a particular country of interest, and then plotted the trend in life expectancy over time
+- Repeat this plot, but selecting three countries of interest and using piping `%>%` to avoid creating an intermediate data frame
+- Use a *facet* to split into separate plots 
+
+******
+******
+******
+
+
+```{r}
+
+
+
+```
+
+
+## Appendix
+
+
+
+
+### Adding text to a plot
 
 Annotations can be added to a plot using the flexible `annotate` function documented [here](https://ggplot2.tidyverse.org/reference/annotate.html). This presumes that you know the coordinates that you want to add the annotations at.
 
@@ -624,7 +646,7 @@ p + geom_text(data = filter(gapminder, gdpPercap > 25000, lifeExp < 75),
 ```
 
 
-## Comment about the axis scale
+### Comment about the axis scale
 
 The plot of `gdpPercap` vs `lifeExp` on the original scale seems to be influenced by the outlier observations (which we now know are observations from `Kuwait`). In such situations it may be possible to transform the scale of one axis for visualisation purposes. One such transformation is `log10`, which we can apply with the `scale_x_log10` function. Others include `scale_x_log2`, `scale_x_sqrt` and equivalents for the y axis.
 
@@ -637,25 +659,4 @@ By splitting the plot by continents we see more clearly which continents have a 
 ```{r}
 p + scale_x_log10() + geom_smooth(method="lm",col="black") + facet_wrap(~continent)
 ```
-
-******
-******
-******
-
-### Exercise
-
-- In a previous exercise we filtered the gapminder data to a particular country of interest, and then plotted the trend in life expectancy over time
-- Repeat this plot, but selecting three countries of interest and using piping `%>%` to avoid creating an intermediate data frame
-- Use a *facet* to split into separate plots 
-
-******
-******
-******
-
-
-### **Solution**
-
-
-
-
 

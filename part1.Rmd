@@ -14,14 +14,23 @@ editor_options:
 
 These materials are adapted from a course developed at Cancer Research Uk Cambridge Institute by Mark Dunning, Matthew Eldridge and Thomas Carroll.
 
-# Introduction to R - Part I
+# Entering commands in R
+
+- The traditional way to enter R commands is via the Terminal, or using the console in RStudio (bottom-left panel when RStudio opens for first time). This doesn’t automatically keep track of the steps you did
+
+We'll be working in an [**R Notebook**](https://bookdown.org/yihui/rmarkdown/notebook.html). These file are an [R Markdown](https://bookdown.org/yihui/rmarkdown/) document type, which allow us to **combine R code with** [markdown](https://pandoc.org/MANUAL.html#pandocs-markdown), **a documentation language**, providing a framework for [literate programming](https://en.wikipedia.org/wiki/Literate_programming).  In an R Notebook, R code chunks can be executed independently and interactively, with output visible immediately beneath the input.
+
+Let’s try this now!
+
+
+**File -> New File - > R script** to create a new R script
+
 
 ```{r}
 print("Hello World")
 ```
 
-
-# Getting started
+R can be used as a calculator to computer simple sums
 
 
 ```{r}
@@ -166,6 +175,7 @@ In the examples above, `seq` and `rnorm` were both outputting a series of number
     + HINT: see the help pages for functions `min`, `max` and `mean`
     
 ```{r}
+## Type your code to answer the exercises in here
 
 
 ```
@@ -181,8 +191,8 @@ If you want to re-visit your code at any point, you will need to save a copy.
 
 <div class="alert alert-info">
 
-#### **File > Save As... > ** 
-_choose workshop material directory and Create a New Folder called `scripts`_
+#### **File > Save > ** 
+
 
 </div>
 
@@ -200,7 +210,12 @@ There are functions for installing packages within R. If your package is part of
 We will be using the `tidyverse` R package in this practical. To install it, we would do.
 
 ```{r eval=FALSE}
-install.packages("tidyverse")
+## You should already have installed these as part of the course setup
+
+install.packages("readr")
+install.packages("ggplot2")
+install.packages("dplyr")
+
 ```
 
 
@@ -209,12 +224,12 @@ A package may have several *dependencies*; other R packages from which it uses f
 **So long as you stick with the same version of R, you won't need to repeat this install process.**
 
 
-Once a package is installed, the `library` function is used to load a package and make it's functions / data available in your current R session. *You need to do this every time you load a new RStudio session*. Let's go ahead and load the `tidyverse`.
+Once a package is installed, the `library` function is used to load a package and make it's functions / data available in your current R session. *You need to do this every time you load a new RStudio session*. Let's go ahead and load the `readr`.
 
 
 ```{r message=FALSE}
 ## tidyverse is a collection of packages for data manipulation and visualisation
-library(tidyverse)
+library(readr)
 ```
 
 
@@ -230,88 +245,6 @@ _Image Credit:_ [***Aberdeen Study Group***](https://aberdeenstudygroup.github.i
 We are going to explore some of the basic features of the `tidyverse` using data from the [gapminder](https://www.gapminder.org/data/) project, which have been bundled into an [R package](https://github.com/jennybc/gapminder). These data give various indicator variables for different countries around the world (life expectancy, population and Gross Domestic Product). We have saved these data as a `.csv` file called `gapminder.csv` in a sub-directory called `raw_data/` to demonstrate how to import data into R.
 
 
-You can download these data, along with the rest of the material needed for today's workshop and a copy of this handout  [here](https://github.com/sheffield-bioinformatics-core/r-crash-course/raw/master/CourseData.zip). Save the `.zip` file somewhere on your computer and unzip it.
-
-
-
-## Working in Rstudio Projects
-
-We are also going to be working in an Rstudio [Project](https://support.rstudio.com/hc/en-us/articles/200526207-Using-Projects). We suggest you **organize each data analysis into a project: a folder on your computer containing all files relevant to a particular piece of work.**
-
-There are a number of benefits to this practice in general, and the Rstudio implementation in particular, summarised in Jenny Bryan's blogpost on [Project-oriented workflows](https://www.tidyverse.org/articles/2017/12/workflow-vs-script/).
-
-In general makes work: 
-
-- Self-contained
-- Portable
-
-RStudio fully supports Project-based workflows, making it easy to switch from one to another, have many projects open at once, re-launch recently used Projects, etc.
-
-There are **a few ways to create new Projects**. We can start new Projects by creating a new directory. We can also **turn an existing directory into a Project**. Let's do this with the unzipped folder containing the workshop materials we just downloaded.
-
-
-<div class="alert alert-info">
-
-#### **File > New Project > Existing Directory > ...** 
-_choose workshop material directory_
-
-</div>
-
-We've now turned our workshop material folder into an Rstudio project and launched it, which means:
-
-- a **fresh R session has been launched** (see how the **Environment** tab is now clear)
-- the **working directory has been set to the project root** (you can check this form the header on the Console tab)
-- A project specific **History** is initiated.
-
-
-## Working in R Notebooks
-
-We'll also be working in an [**R Notebook**](https://bookdown.org/yihui/rmarkdown/notebook.html). These file are an [R Markdown](https://bookdown.org/yihui/rmarkdown/) document type, which allow us to **combine R code with** [markdown](https://pandoc.org/MANUAL.html#pandocs-markdown), **a documentation language**, providing a framework for [literate programming](https://en.wikipedia.org/wiki/Literate_programming).  In an R Notebook, R code chunks can be executed independently and interactively, with output visible immediately beneath the input.
-
-**Let's open an R Notebook to start work in.**
-
-<div class="alert alert-info">
-
-#### **File > Open File >** 
-
-- Navigate to the file `notes.Rmd` in the course materials
-
-</div>
-
-Each chunk of R code looks something like this.
-
-    `r ''````{r}
-    print('hello world!')
-    ```
-
-New R code chunks can be inserted by: 
-
-- keyboard shortcut: `Ctrl + Alt + I` (macOS: `Cmd + Option + I`) 
-- `Insert` menu in the editor toolbar.
-
-Each line of R in the chunks can be again executed by clicking on the line or highlighting code and pressing `Ctrl + Enter` (macOS: `Cmd + Enter`), or you can press the green triangle on the right-hand side to run everything in the chunk.
-
-
-_For more details, check out this [short tutorial](https://annakrystalli.me/literate-programming/) on literate programming in R Markdown_
-
-Let's clear everything and write our first markdown and chunk of code by creating a `markdown` header with:
-
-```
-# Packages
-```
-
-
-and loading the tidyverse packages for the analysis in our notebook
-
-    `r ''````{r load-packages}
-    library("tidyverse")
-    ```
-
-```{r load-packages, message=FALSE}
-library("tidyverse")
-```
-
-<br>
 
 
 
@@ -348,6 +281,8 @@ The data frame object in R allows us to work with **"tabular" data**, like we mi
 In Rstudio, you can **view the contents of the data frame** we have just created using function `View()`. This is useful for interactive exploration of the data, but not so useful for automation, scripting and analyses.
 
 ```{r eval=FALSE}
+## Make sure that you use a capital letter V
+
 View(gapminder)
 ```
 
@@ -400,7 +335,7 @@ country_vec <- gapminder$country
 
 
 
-### Exercise
+### Exercise before the next session
 
 - The function `tail` is similar to `head` except it prints the *last* lines in a file. Use this function to print the last *10* lines in the data frame (you will have to consult the help on `tail` to see how to change the default arguments.)
 - What is the largest observed population?
@@ -409,6 +344,12 @@ country_vec <- gapminder$country
 ******
 ******
 ******
+
+```{r}
+## Type your code to answer the exercises in here
+
+
+```
 
 
 <div class="alert alert-warning">
