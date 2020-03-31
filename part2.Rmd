@@ -234,7 +234,7 @@ We will now try an exercise that involves using several steps of these operation
 
 - Filter the data to include just observations from the year 2002
 - Re-arrange the table so that the countries from each continent are ordered according to decreasing wealth. i.e. the wealthiest countries first
-- Remove the year column from the resulting data frame
+- Select all the columns apart from year 
 - Write the data frame out to a file in `data/` folder
 
 ```{r echo=FALSE}
@@ -586,16 +586,21 @@ filter(gapminder, continent!="Oceania", year %in% c(1997,2002,2007)) %>%
 ******
 ******
 
-### Exercise
+### Exercises before the next session
 
+- Using the filter function, find all countries that start with the letter Z
+  + Hint: first create a new column in `gapminder` which is the first letter of each country (you can do this the using `substr` function)
 - In a previous exercise we filtered the gapminder data to a particular country of interest, and then plotted the trend in life expectancy over time
-- Repeat this plot, but selecting three countries of interest and using piping `%>%` to avoid creating an intermediate data frame
-- Use a *facet* to split into separate plots 
+  + Repeat this plot, but selecting three countries of interest and using piping `%>%` to avoid creating an intermediate data frame
+  + Use a *facet* to split into separate plots 
 
 ******
 ******
 ******
 
+See the online notes for a suggestion:-
+
+![](https://raw.githubusercontent.com/sheffield-bioinformatics-core/r-crash-course/master/images/facet_exercise.png)
 
 ```{r}
 

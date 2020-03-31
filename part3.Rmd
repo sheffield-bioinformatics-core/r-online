@@ -59,15 +59,14 @@ gapminder %>%
               AveragePop = mean(pop))
 ```
 
-Other summary statistics that can be useful include `first` and `last` which are used to report the first and last values for a particular group. For instance, we might want to look at the increase in wealth over time for each country by extracting their `gdpPercap` in `1952` and `2007`.
+If we want to summarise several columns we can use the convenient `summarise_all` function. However, this will return `NA` values for columns that do not contain numeric values.
 
-```{r}
+```{r warning=FALSE}
 gapminder %>% 
-  group_by(country) %>% 
-  arrange(year) %>% 
-summarise(StartGDP = first(gdpPercap), EndGDP = last(gdpPercap), GDPIncrease = EndGDP - StartGDP)
-
+  group_by(continent,year) %>% 
+  summarise_all(mean)
 ```
+
 
 
 The nice thing about `summarise` is that it can followed up by any of the other `dplyr` verbs that we have met so far (`select`, `filter`, `arrange`..etc). 
@@ -118,10 +117,10 @@ filter(gapminder, country %in% c("Rwanda","Zambia","Zimbabwe")) %>%
 ******
 ******
 
+![](https://raw.githubusercontent.com/sheffield-bioinformatics-core/r-crash-course/master/images/summarise_example.png)
 
 
-
-```{r echo=FALSE}
+```{r}
 
 
 
@@ -142,7 +141,7 @@ band_members
 
 There are various ways in which we can join these two tables together. We will just consider the case of a "left join".
 
-![](images/left-join.gif)
+![](https://raw.githubusercontent.com/sheffield-bioinformatics-core/r-crash-course/master/images/left-join.gif)
 
 *Animated gif by Garrick Aden-Buie*
 
@@ -153,7 +152,6 @@ Animations to illustrate other types of join are available at [https://github.co
 ```{r}
 left_join(band_members, band_instruments)
 ```
-
 `right_join` is similar but returns all rows from the second data frame that have a match with rows in the first data frame based on the specified column.
 
 ```{r}
@@ -175,16 +173,26 @@ inner_join(band_members, band_instruments)
 
 ### Exercise (open-ended)
 
-- The file `medal_table.csv` in the `raw_data/` project sub-directory contains data about how many medals how been won by various countries at the Beijing summer olympics of 2008.
-- Read this csv file into R and join with the `gapminder` data from 2007
-- What interesting summaries / plots can you make from the data? For example...
-  + what countries have the greatest proportion of gold medals (ignore countries with too few medals)
-  + calculate the number of medals won per million people and re-arrange by this new measure. What countries perform best?
-  + how similar is the distribution of total medals between continents?
-  + do countries with a larger population tend to win more medals?
-  + do countries with larger GDP tend to win more medals?
-  + are these trends consistent among different continents?
-  
+- Data for global COVID-19 cases are available online from CSSE at Johns Hopkins University on their github repository
+- Download these data to your computer (URL below)
+- Transform these data into "long" format for analysis using the `gather` function from the `tidyr` package
+- Explore the data and generate some plots you may have seen in the media
+    + e.g. trajectory of cases over time
+- Join to the `gapminder` dataset to scale the number of cases by population size
+
+
 ******
 ******
 ******
+
+```{r}
+download.file("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",destfile = "time_series_covid19_confirmed_global.csv")
+
+covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+  rename(country = `Country/Region`) %>% 
+  tidyr::gather(Date, Cases, 5:72)
+
+```
+
+
+
