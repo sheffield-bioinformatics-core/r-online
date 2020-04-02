@@ -1,0 +1,112 @@
+---
+title: "R online Training Introduction"
+author: "Mark Dunning - Sheffield Bioinformatics Core"
+date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+## History of R
+
+![](images/NYTimes_R_Article.png)
+
+## Powerful data manipulation and graphics capabilities
+
+<img src="https://cdn-images-2.medium.com/max/1200/1*BTMbVFh_hziJJcaQ7TBRwg.png" style="width: 100%; display: block; margin-left: auto; margin-right: auto;"/>
+
+
+
+## Notable uses
+
+- [Facebook](http://blog.revolutionanalytics.com/2010/12/analysis-of-facebook-status-updates.html),
+- [google](http://blog.revolutionanalytics.com/2009/05/google-using-r-to-analyze-effectiveness-of-tv-ads.html),
+- [Microsoft](http://blog.revolutionanalytics.com/2014/05/microsoft-uses-r-for-xbox-matchmaking.html) (who recently [invested](http://blogs.microsoft.com/blog/2015/01/23/microsoft-acquire-revolution-analytics-help-customers-find-big-data-value-advanced-statistical-analysis/) in a commerical provider of R)
+- The [New York Times](http://blog.revolutionanalytics.com/2011/03/how-the-new-york-times-uses-r-for-data-visualization.html).
+- [Buzzfeed](http://blog.revolutionanalytics.com/2015/12/buzzfeed-uses-r-for-data-journalism.html) use R for some of their serious articles and have made the code [publically available](https://buzzfeednews.github.io/2016-04-federal-surveillance-planes/analysis.html)
+- The [New Zealand Tourist Board](https://mbienz.shinyapps.io/tourism_dashboard_prod/) have R running in the background of their website
+- The BBC makes code available for some of their stories (e.g. [gender bias in music festivals](https://github.com/BBC-Data-Unit/music-festivals))
+- [Airbnb](https://medium.com/airbnb-engineering/using-r-packages-and-education-to-scale-data-science-at-airbnb-906faa58e12d)
+
+## A relevant example
+
+<img src="https://ichef.bbci.co.uk/news/660/cpsprodpb/EB53/production/_111434206_coronavirus_top_20_new_cases_heatmap26mar-nc.png"style="width: 100%; display: block; margin-left: auto; margin-right: auto;"/>
+
+
+## Topics covered
+
+- The Rstudio environment
+- Importing data from a spreadsheet
+- Filtering Data
+- Plotting
+- Calculating numerical summaries
+- Reporting
+- Joining data from multiple spreadsheets
+
+## Packages covered
+
+- We will cover a very small set of packages - the **tidyverse**
+
+<img src="https://aberdeenstudygroup.github.io/studyGroup/lessons/SG-T2-JointWorkshop/tidyverse.png" style="width: 100%; display: block; margin-left: auto; margin-right: auto;"/>
+
+_Image Credit:_ [***Aberdeen Study Group***](https://aberdeenstudygroup.github.io/studyGroup/lessons/SG-T2-JointWorkshop/PopulationChangeSpeciesOccurrence/)
+
+
+
+## Can't we just do these things in Excel?
+
+- Spreadsheets are a common entry point for many types of analysis and Excel is used widely but
+    + can be unwieldy and difficult to deal with large amounts of data
+- error prone (e.g. gene symbols turning into dates)
+- tedious and time consuming to repeatedly process multiple files
+- how can you, or someone else, repeat what you did several months or years down the line? 
+
+## Facilitating reproducible research
+
+<iframe width="420" height="315" src="https://www.youtube.com/embed/7gYIs7uYbMo" frameborder="0" allowfullscreen></iframe>
+
+## Course Data
+
+<img src="images/gapminder.png" style="width: 50%; display: block; margin-left: auto; margin-right: auto;"/>
+
+- We will use data from the gapminder project
+
+## Example plots
+
+- By the end of the course we will be creating plots like this in a few lines of code
+
+```{r echo=FALSE, message=FALSE,fig.width=8,warning=FALSE}
+library(tidyverse)
+gapminder::gapminder %>% filter(year==1977) %>% ggplot(aes(x = gdpPercap, y=lifeExp,colour=continent,size=pop)) + geom_point()+ scale_x_log10() + scale_color_brewer("Continent",palette = "Set1") + scale_size_continuous("Population in 1977")
+```
+
+## Example plots
+
+```{r fig.width=8,message=FALSE}
+gapminder::gapminder %>% filter(country %in% c("Zambia","Rwanda","Zimbabwe","United Kingdom","Spain","Germany")) %>% ggplot(aes(x=year, y=lifeExp,col=country)) + geom_point() + geom_smooth() + facet_wrap(~country) + scale_color_brewer("Country",palette = "Set2")
+``` 
+
+## Course Outline
+
+- Session 1:- RStudio and R basis
+- Session 2:- Reading data into R and data manipulation
+- Session 3:- Summarising, joining tables and open-ended practice
+
+## Resources
+
+- [Tidyverse website](https://www.tidyverse.org/)
+- [RStudio cheatsheets](https://www.rstudio.com/resources/cheatsheets/)
+- [R graph gallery](https://www.r-graph-gallery.com/0)
+- [Sheffield R meetup](https://www.meetup.com/SheffieldR-Sheffield-R-Users-Group/)
+- [Stack Overflow](https://stackoverflow.com/questions/tagged/r)
+- [R bloggers](https://www.r-bloggers.com/)
+- google!
+
+## Thanks
+
+- Materials at https://sbc.shef.ac.uk/training/r-introduction-online/
+- Find this useful? Tell your colleagues and mention us on twitter
+  + `@SheffBioinfCore`
