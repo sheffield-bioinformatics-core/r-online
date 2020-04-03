@@ -333,23 +333,35 @@ country_vec <- gapminder$country
 ******
 ******
 
+## Creating a new R notebook
+
+You will probably want to create a new *R notebook* file to perform your analysis. This can be done by following the menus:-
+
+**File -> New File -> R notebook** 
+
+A new pane should open that includes some example code. You can delete everything **apart from lines 1 to 4**
+
+![](images/blank_notebook.png)
+
+You can now insert R code chunks using the insert menu.
+
+Before generating a report you will need to save the file with the menu **File -> Save**. You will then be able to create a report using the Preview button. N.B. you may need to install extra software before doing this.
 
 
 ### Exercise before the next session
 
-- The function `tail` is similar to `head` except it prints the *last* lines in a file. Use this function to print the last *10* lines in the data frame (you will have to consult the help on `tail` to see how to change the default arguments.)
-- What is the largest observed population?
-- What is the lowest life expectancy
+
+- Create a new R notebook using the instructions above and create a code chunk to read the `gapminder.csv` file. Answer the following questions and generate a report 
+  + The function `tail` is similar to `head` except it prints the *last* lines in a file. Use this function to print the last *10* lines in the data frame (you will have to consult the help on `tail` to see how to change the default arguments.)
+  + What is the largest observed population?
+  + What is the lowest life expectancy
+
+
 
 ******
 ******
 ******
 
-```{r}
-## Type your code to answer the exercises in here
-
-
-```
 
 
 <div class="alert alert-warning">
