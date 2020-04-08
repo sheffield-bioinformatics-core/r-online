@@ -1,0 +1,55 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+# Part 2 Solutions
+
+```{r}
+### Load the libraries will we need
+library(readr)
+library(dplyr)
+library(ggplot2)
+```
+
+Read the data and check
+
+```{r}
+gapminder <- read_csv("raw_data/gapminder.csv")
+head(gapminder)
+```
+
+## Task 1
+
+Add an extra column; the first letter of each country name. Assigning a new variable on each line
+
+```{r}
+gapminder2 <- mutate(gapminder, FirstLetter = substr(country, 1,1))
+gapminder3 <- filter(gapminder2, FirstLetter == "Z")
+gapminder3
+```
+
+A more efficient solution
+
+```{r}
+gapminder %>% 
+  mutate(FirstLetter = substr(country,1,1)) %>% 
+  filter(FirstLetter == "Z")
+```
+
+## Task 2
+
+```{r}
+## All countries on the same plot
+filter(gapminder, country %in% c("United Kingdom", "Spain", "France")) %>% 
+  ggplot(aes(x = year, y = lifeExp, col=country)) + geom_line()
+
+```
+
+Facet by country
+
+```{r}
+filter(gapminder, country %in% c("United Kingdom", "Spain", "France")) %>% 
+  ggplot(aes(x = year, y = lifeExp, col=country)) + geom_line() + facet_wrap(~country)
+```
+

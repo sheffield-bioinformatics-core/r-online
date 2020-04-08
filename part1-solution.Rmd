@@ -1,0 +1,30 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(readr)
+file.exists("raw_data/gapminder.csv")
+gapminder <- read_csv("raw_data/gapminder.csv")
+
+```
+
+Print last 10 rows of the table
+
+```{r}
+tail(gapminder,n=10)
+```
+
+What is the largest population?
+
+```{r}
+max(gapminder$pop)
+```
+
+What is the lowest life expectancy?
+
+```{r}
+min(gapminder$lifeExp)
+```
+
