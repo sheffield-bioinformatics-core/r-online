@@ -555,6 +555,24 @@ p + theme_bw()
 
 More themes are supported by the `ggthemes` package. You can make your plots look like the Economist, Wall Street Journal or Excel (**but please don't do this!**)
 
+******
+******
+******
+
+### Exercises before the next session
+
+- Using the filter function, find all countries that start with the letter Z
+  + Hint: first create a new column in `gapminder` which is the first letter of each country (you can do this the using `substr` function)
+- Use `geom_tile` to create a heatmap visualising life expectancy over time for European countries. You will need to work out what `aes`thetics to specify for a `geom_tile` plot
+
+******
+******
+******
+
+See the online notes for a suggestion:-
+
+![](https://raw.githubusercontent.com/sheffield-bioinformatics-core/r-online/master/images/tile_example.png)
+
 ## Facets
 
 One very useful feature of ggplot is faceting. This allows you to produce plots subset by variables in your data. In the scatter plot above, it was quite difficult to see if the relationship between gdp and life expectancy was the same for each continent. To overcome this, we would like a see a separate plot for each continent.
@@ -582,25 +600,8 @@ filter(gapminder, continent!="Oceania", year %in% c(1997,2002,2007)) %>%
 ```
 
 
-******
-******
-******
 
-### Exercises before the next session
 
-- Using the filter function, find all countries that start with the letter Z
-  + Hint: first create a new column in `gapminder` which is the first letter of each country (you can do this the using `substr` function)
-- In a previous exercise we filtered the gapminder data to a particular country of interest, and then plotted the trend in life expectancy over time
-  + Repeat this plot, but selecting three countries of interest and using piping `%>%` to avoid creating an intermediate data frame
-  + Use a *facet* to split into separate plots 
-
-******
-******
-******
-
-See the online notes for a suggestion:-
-
-![](https://raw.githubusercontent.com/sheffield-bioinformatics-core/r-crash-course/master/images/facet_exercise.png)
 
 ```{r}
 
