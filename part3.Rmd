@@ -15,7 +15,7 @@ editor_options:
 ## Recap
 
 ```{r message=FALSE}
-library(tidyverse)
+library(readr)
 gapminder <- read_csv("raw_data/gapminder.csv")
 ```
 
@@ -36,6 +36,7 @@ The `summarise` function can take any R function that takes a vector of values (
 
 
 ```{r}
+library(dplyr)
 summarise(gapminder, min(lifeExp), max(gdpPercap), mean(pop))
 ```
 
@@ -99,6 +100,7 @@ gapminder %>%
 The countries we identify could then be used as the basis for a plot.
 
 ```{r}
+library(ggplot2)
 filter(gapminder, country %in% c("Rwanda","Zambia","Zimbabwe")) %>% 
   ggplot(aes(x=year, y=lifeExp,col=country)) + geom_line()
 ``` 
@@ -186,11 +188,14 @@ inner_join(band_members, band_instruments)
 ******
 
 ```{r}
+if(!require(tidyr)) install.packages("tidyr")
+
 download.file("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",destfile = "time_series_covid19_confirmed_global.csv")
 
 covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
-  tidyr::gather(Date, Cases, 5:72)
+  tidyr::gather(Date, Cases, 5:last_col()) %>% 
+  mutate(Date=as.Date(Date,"%m/%d/%y"))
 
 ```
 
