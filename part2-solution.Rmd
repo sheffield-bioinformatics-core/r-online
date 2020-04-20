@@ -37,19 +37,12 @@ gapminder %>%
   filter(FirstLetter == "Z")
 ```
 
-## Task 2
+## Task 2 - Heatmap of life expectancy
 
 ```{r}
-## All countries on the same plot
-filter(gapminder, country %in% c("United Kingdom", "Spain", "France")) %>% 
-  ggplot(aes(x = year, y = lifeExp, col=country)) + geom_line()
-
-```
-
-Facet by country
-
-```{r}
-filter(gapminder, country %in% c("United Kingdom", "Spain", "France")) %>% 
-  ggplot(aes(x = year, y = lifeExp, col=country)) + geom_line() + facet_wrap(~country)
+## Get the European countries
+filter(gapminder, continent == "Europe") %>% 
+## make heatmap. See the fill aesthetic to be life expectancy
+ggplot(aes(x=year,y=country,fill=lifeExp)) + geom_tile()
 ```
 
