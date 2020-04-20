@@ -561,8 +561,8 @@ More themes are supported by the `ggthemes` package. You can make your plots loo
 
 ### Exercises before the next session
 
-- Using the filter function, find all countries that start with the letter Z
-  + Hint: first create a new column in `gapminder` which is the first letter of each country (you can do this the using `substr` function)
+- Using the `filter` function, find all countries that start with the letter Z
+  + Hint: You can find the first letter of each country using the `substr` function. The `mutate` function can then be used to add a new column to the data.
 - Use `geom_tile` to create a heatmap visualising life expectancy over time for European countries. You will need to work out what `aes`thetics to specify for a `geom_tile` plot
 
 ******
