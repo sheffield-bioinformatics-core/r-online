@@ -92,8 +92,8 @@ gapminder::gapminder %>% filter(country %in% c("Zambia","Rwanda","Zimbabwe","Uni
 ## Course Outline
 
 - Session 1:- RStudio and R basis
-- Session 2:- Reading data into R and data manipulation
-- Session 3:- Summarising, joining tables and open-ended practice
+- Session 2:- Reading data into R, data manipulation and plotting
+- Session 3:- Further plotting, Summarising, joining tables and open-ended practice
 
 ## Resources
 
