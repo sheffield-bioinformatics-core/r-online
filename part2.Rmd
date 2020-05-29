@@ -573,47 +573,8 @@ See the online notes for a suggestion:-
 
 ![](https://raw.githubusercontent.com/sheffield-bioinformatics-core/r-online/master/images/tile_example.png)
 
-## Facets
-
-One very useful feature of ggplot is faceting. This allows you to produce plots subset by variables in your data. In the scatter plot above, it was quite difficult to see if the relationship between gdp and life expectancy was the same for each continent. To overcome this, we would like a see a separate plot for each continent.
-
-To facet our data into multiple plots we can use the `facet_wrap` or `facet_grid` function and specify the variable we split by. 
-
-```{r}
-p + facet_wrap(~continent)
-
-```
-
-The `facet_grid` function will create a grid-like plot with one variable on the x-axis and another on the y-axis.
-
-```{r fig.width=12}
-p + facet_grid(continent~year)
-```
-
-
-The previous plot was a bit messy as it contained all combinations of year and continent. Let's suppose we want our analysis to be a bit more focussed and disregard countries in Oceania (as there are only 2 in our dataset) and years between 1997 and 2002. We should know how to restrict the rows from the `gapminder` dataset using the `filter` function. Instead of filtering the data, creating a new data frame and construcing the data frame from these new data we can use the` %>%` operator to create the data frame on the fly and pass directly to `ggplot`. Thus we don't have to save a new data frame or alter the original data.
-
-
-```{r fig.width=12}
-filter(gapminder, continent!="Oceania", year %in% c(1997,2002,2007)) %>% 
-  ggplot(aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point() + facet_grid(continent~year)
-```
-
-
-
-
-
-```{r}
-
-
-
-```
-
 
 ## Appendix
-
-
-
 
 ### Adding text to a plot
 
