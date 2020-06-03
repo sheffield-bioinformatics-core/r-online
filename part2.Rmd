@@ -68,7 +68,7 @@ There are a number of helper functions can be employed if we are unsure about th
 ```{r}
 select(gapminder, starts_with("life"))
 select(gapminder, contains("pop"))
-select(gapminder, one_of("pop", "country"))
+select(gapminder, last_col(1),last_col())
 ```
 
 ### Restricting rows with filter
