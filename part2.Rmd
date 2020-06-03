@@ -14,7 +14,7 @@ editor_options:
 
 ## Recap
 
-We should have loaded the `tidyverse` library and imported an example dataset into R
+We should have loaded the `readr` library and imported an example dataset into R
 
 ```{r message=FALSE}
 library(readr)
