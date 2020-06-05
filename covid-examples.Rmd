@@ -1,0 +1,74 @@
+---
+title: "Covid Examples"
+output: html_notebook
+---
+
+# Some examples of visualising the Covid-19 dataset using `dplyr` and `ggplot2`
+
+First load the required libraries
+
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+
+```
+
+Download the Covid dataset and tidy
+
+```{r}
+download.file("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",destfile = "time_series_covid19_confirmed_global.csv")
+
+covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+  rename(country = `Country/Region`) %>% 
+  tidyr::gather(Date, Cases, 5:last_col()) %>% 
+  mutate(Date=as.Date(Date,"%m/%d/%y"))
+```
+
+Finding the European countries with most cases
+
+```{r}
+gapminder <- read_csv("raw_data/gapminder.csv")
+filter(gapminder, year ==  2007, continent=="Europe") %>% 
+  left_join(covid) %>% 
+  filter(Date == "2020-06-04") %>% 
+  group_by(country) %>% 
+  summarise(Cases = sum(Cases)) %>% 
+  arrange(desc(Cases))
+
+```
+
+Compare trajectories of different countries
+
+```{r}
+filter(covid, country %in% c("United Kingdom","France","Spain")) %>% 
+  group_by(country,Date) %>% 
+  summarise(Cases = sum(Cases)) %>% 
+  ggplot(aes(x = Date, y = Cases,col=country)) + geom_line()
+```
+
+Heatmap of number of cases over time
+
+```{r}
+### Get the 2007 gapminder data to avoid repeating data
+filter(gapminder, year ==  2007, continent=="Europe") %>% 
+  left_join(covid) %>% 
+  group_by(country,Date) %>% 
+  summarise(Cases = sum(Cases)) %>% ## sum in case a country has multiple rows (e.g. United Kingdom)
+  filter(!is.na(Cases)) %>% ## remove countries with missing values
+  ggplot(aes(x = Date, y = country,fill=Cases)) + geom_tile()
+  
+```
+
+
+Compare average number of cases per-continent
+
+```{r}
+filter(gapminder, year ==  2007) %>% 
+  left_join(covid) %>% 
+  group_by(continent,Date) %>% 
+  summarise(Cases = mean(Cases)) %>% 
+  ggplot(aes(x = Date, y = Cases, fill=continent))+ geom_col() + facet_wrap(~continent,scale="free_y")
+```
+
+
