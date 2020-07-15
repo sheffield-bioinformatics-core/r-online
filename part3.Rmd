@@ -6,17 +6,23 @@ output:
   html_notebook: 
     toc: yes
     toc_float: yes
+    css: stylesheets/styles.css
 editor_options: 
   chunk_output_type: inline
 ---
 
 # Introduction to R - Part III
 
-Lets make sure we have read the gapminder data into R.
+<img src="images/logo-sm.png" style="position:absolute;top:40px;right:10px;" width="200" />
+
+
+Lets make sure we have read the gapminder data into R and have the relevant packages loaded.
 
 ```{r message=FALSE}
 library(readr)
 gapminder <- read_csv("raw_data/gapminder.csv")
+library(dplyr)
+library(ggplot2)
 ```
 
 Now make a scatter plot of gdp versus life expectancy as we did in the previous session.
@@ -28,9 +34,9 @@ p <- ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point
 
 ## Facets
 
-One very useful feature of ggplot is faceting. This allows you to produce plots subset by variables in your data. In the scatter plot above, it was quite difficult to see if the relationship between gdp and life expectancy was the same for each continent. To overcome this, we would like a see a separate plot for each continent.
+One very useful feature of `ggplot2` is faceting. This allows you to produce plots subset by variables in your data. In the scatter plot above, it was quite difficult to see if the relationship between gdp and life expectancy was the same for each continent. To overcome this, we would like a see a separate plot for each continent.
 
-To facet our data into multiple plots we can use the `facet_wrap` or `facet_grid` function and specify the variable we split by. 
+To facet our data into multiple plots we can use the `facet_wrap` (1 variable) or `facet_grid` (2 variables) functions and specify the variable(s) we split by. 
 
 ```{r}
 p + facet_wrap(~continent)
@@ -44,22 +50,15 @@ p + facet_grid(continent~year)
 ```
 
 
-The previous plot was a bit messy as it contained all combinations of year and continent. Let's suppose we want our analysis to be a bit more focussed and disregard countries in Oceania (as there are only 2 in our dataset) and years between 1997 and 2002. We should know how to restrict the rows from the `gapminder` dataset using the `filter` function. Instead of filtering the data, creating a new data frame and construcing the data frame from these new data we can use the` %>%` operator to create the data frame on the fly and pass directly to `ggplot`. Thus we don't have to save a new data frame or alter the original data.
+The previous plot was a bit messy as it contained all combinations of year and continent. Let's suppose we want our analysis to be a bit more focused and disregard countries in Oceania (as there are only 2 in our dataset) and maybe years between 1997 and 2002. 
+
+
+We should know how to restrict the rows from the `gapminder` dataset using the `filter` function. Instead of filtering the data, creating a new data frame and constructing the data frame from these new data we can use the` %>%` operator to create the data frame on the fly and pass directly to `ggplot`. Thus we don't have to save a new data frame or alter the original data.
 
 
 ```{r fig.width=12}
 filter(gapminder, continent!="Oceania", year %in% c(1997,2002,2007)) %>% 
   ggplot(aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point() + facet_grid(continent~year)
-```
-
-
-
-
-
-```{r}
-
-
-
 ```
 
 
@@ -113,7 +112,14 @@ gapminder %>%
 
 
 
-The nice thing about `summarise` is that it can followed up by any of the other `dplyr` verbs that we have met so far (`select`, `filter`, `arrange`..etc). 
+The nice thing about `summarise` is that it can followed up by any of the other `dplyr` verbs that we have met so far (`select`, `filter`, `arrange`..etc). As the `country` column of the previous output containing missing values we can exclude it from further processing.
+
+```{r warning=FALSE}
+gapminder %>% 
+  group_by(continent,year) %>% 
+  summarise_all(mean) %>% 
+  select(-country)
+```
 
 Returning to the correlation between life expectancy and year, we can summarise as follows:-
 
@@ -122,6 +128,7 @@ gapminder %>%
     group_by(country) %>% 
     summarise(Correlation = cor(year , lifeExp))
 ```
+
 We can then arrange the table by the correlation to see which countries have the lowest correlation
 
 ```{r}
@@ -131,7 +138,7 @@ gapminder %>%
     arrange(Correlation)
 ```
 
-We can filter the results to find obsevations of interest
+We can filter the results to find observations of interest
 
 ```{r}
 gapminder %>%      
@@ -151,12 +158,12 @@ filter(gapminder, country %in% c("Rwanda","Zambia","Zimbabwe")) %>%
 ******
 ******
 ******
-
 ### Exercise 
-
-- Produce a plot to show the change in average `gdpPercap` for each continent over time.
+<div class="exercise">
+- Summarise the `gapminder` data in an appropriate manner to produce a plot to show the change in average `gdpPercap` for each continent over time.
 - see below for a suggestion
-    + HINT: you will need to specifiy the `geom_col` function to create the bar plot
+    + HINT: you will need to use the `geom_col` function to create the bar plot
+</div>
 
 ******
 ******
@@ -178,35 +185,43 @@ In many real life situations, data are spread across multiple tables or spreadsh
 
 `dplyr` provides a set of join functions for combining two data frames based on matches within specified columns. For those familiar with such SQL, these operations are very similar to carrying out join operations between tables in a relational database.
 
-As a toy example, lets consider two data frames that contain the names of various bands, and the instruments that they play:-
+As a toy example, lets consider two data frames that some results of testing whether genes A, B and C are significant in our study (gene expression, mutations, etc.)
+
 ```{r}
-band_instruments
-band_members
+gene_results <- data.frame(Name=LETTERS[1:3], pvalue = c(0.001, 0.1,0.01))
+gene_results
 ```
 
-There are various ways in which we can join these two tables together. We will just consider the case of a "left join".
+We might also have a data frame containing more data about the genes; such as which chromosome they are located on. As part of our data interpretation we might need to know where in the genome the genes are located.
+
+```{r}
+gene_anno <- data.frame(Name = c("A","B","D"), chromosome=c(1,1,3))
+gene_anno
+```
+
+There are various ways in which we can join these two tables together. We will first consider the case of a "left join".
 
 ![](https://raw.githubusercontent.com/sheffield-bioinformatics-core/r-crash-course/master/images/left-join.gif)
 
 *Animated gif by Garrick Aden-Buie*
 
-`left_join` returns all rows from the first data frame regardless of whether there is a match in the second data frame. Rows with no match are included in the resulting data frame but have NA values in the additional columns coming from the second data frame.
+`left_join` returns all rows from the first data frame regardless of whether there is a match in the second data frame. Rows with no match are included in the resulting data frame but have `NA` values in the additional columns coming from the second data frame.
 
 Animations to illustrate other types of join are available at [https://github.com/gadenbuie/tidy-animated-verbs](https://github.com/gadenbuie/tidy-animated-verbs)
 
 ```{r}
-left_join(band_members, band_instruments)
+left_join(gene_results, gene_anno)
 ```
 `right_join` is similar but returns all rows from the second data frame that have a match with rows in the first data frame based on the specified column.
 
 ```{r}
-right_join(band_members, band_instruments)
+right_join(gene_results, gene_anno)
 ```
 
 `inner_join` only returns those rows where matches could be made
 
 ```{r}
-inner_join(band_members, band_instruments)
+inner_join(gene_results, gene_anno)
 ```
 
 

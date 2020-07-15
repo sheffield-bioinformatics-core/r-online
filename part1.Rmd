@@ -6,25 +6,38 @@ output:
   html_notebook: 
     toc: yes
     toc_float: yes
+    css: stylesheets/styles.css
 editor_options: 
   chunk_output_type: inline
 ---
+<img src="images/logo-sm.png" style="position:absolute;top:40px;right:10px;" width="200" />
+
 
 # Acknowledgement
 
 These materials are adapted from a course developed at Cancer Research Uk Cambridge Institute by Mark Dunning, Matthew Eldridge and Thomas Carroll.
 
+# Using these notes
+
+<div class="exercise">
+Sections with this background indicate exercises to be completed during the workshop.
+</div>
+
+<div class="information">
+Sections with this background highlight particular shortcuts or other references that might be useful.
+</div>
+
+<div class="warning">
+Sections with this background give information about potential error messages or might encounter, or problems that might arise in your own data analysis.
+</div>
+
 # Entering commands in R
 
-- The traditional way to enter R commands is via the Terminal, or using the console in RStudio (bottom-left panel when RStudio opens for first time). This doesn’t automatically keep track of the steps you did
+The traditional way to enter R commands is via the Terminal, or using the console in RStudio (bottom-left panel when RStudio opens for first time). This doesn’t automatically keep track of the steps you did.
 
 We'll be working in an [**R Notebook**](https://bookdown.org/yihui/rmarkdown/notebook.html). These file are an [R Markdown](https://bookdown.org/yihui/rmarkdown/) document type, which allow us to **combine R code with** [markdown](https://pandoc.org/MANUAL.html#pandocs-markdown), **a documentation language**, providing a framework for [literate programming](https://en.wikipedia.org/wiki/Literate_programming).  In an R Notebook, R code chunks can be executed independently and interactively, with output visible immediately beneath the input.
 
 Let’s try this now!
-
-
-**File -> New File - > R script** to create a new R script
-
 
 ```{r}
 print("Hello World")
@@ -93,14 +106,14 @@ x <- 21
 x
 ```
 
-- We can set one variable to equal the value of another variable:
+We can set one variable to equal the value of another variable:
 
 ```{r}
 x <- myNumber
 x
 ```
 
-- We can modify the contents of a variable:
+We can modify the contents of a variable:
 
 ```{r}
 myNumber <- myNumber + sqrt(16)
@@ -164,6 +177,7 @@ In the examples above, `seq` and `rnorm` were both outputting a series of number
 
 ### Exercise
 
+<div class="exercise">
 
   - What is the value of `pi` to 3 decimal places?
     + see the help for `round` `?round`
@@ -173,7 +187,8 @@ In the examples above, `seq` and `rnorm` were both outputting a series of number
     + what is the maximum and minimum of these numbers?
     + what is the average?
     + HINT: see the help pages for functions `min`, `max` and `mean`
-    
+</div>
+
 ```{r}
 ## Type your code to answer the exercises in here
 
@@ -185,14 +200,13 @@ In the examples above, `seq` and `rnorm` were both outputting a series of number
 ******
 ******
 
-## Saving your script
+## Saving your notebook
 
 If you want to re-visit your code at any point, you will need to save a copy.
 
-<div class="alert alert-info">
+<div class="information">
 
-#### **File > Save > ** 
-
+**File > Save > ** 
 
 </div>
 
@@ -203,11 +217,18 @@ So far we have used functions that are available with the *base* distribution of
 
 Packages are distributed through *repositories*. The most-common ones are CRAN and Bioconductor. CRAN alone has many thousands of packages.
 
+<div class="information">
+- The [meta cran](https://www.r-pkg.org/) website can be used to browse packages available in CRAN
+- Bioconductor packages can be browsed [here](http://bioconductor.org/packages/release/BiocViews.html#___Software)
+</div>
+
+CRAN and Bioconductor have some level of curation so should be the first place to look. Researchers sometimes make their packages available on [github](www.github.com). However, there is no straightforward way of searching github for a particular package and no guarentee of quality.
+
 The **Packages** tab in the bottom-right panel of RStudio lists all packages that you currently have installed. Clicking on a package name will show a list of functions that available once that package has been loaded. 
 
-There are functions for installing packages within R. If your package is part of the main **CRAN** repository, you can use `install.packages`
+There are functions for installing packages within R. If your package is part of the main **CRAN** repository, you can use `install.packages`.
 
-We will be using the `tidyverse` R package in this practical. To install it, we would do.
+We will be using a set of `tidyverse` R packages in this practical. To install them, we would do.
 
 ```{r eval=FALSE}
 ## You should already have installed these as part of the course setup
@@ -215,8 +236,9 @@ We will be using the `tidyverse` R package in this practical. To install it, we 
 install.packages("readr")
 install.packages("ggplot2")
 install.packages("dplyr")
-
+# to install the entire set of tidyverse packages, we can do install.packages("tidyverse"). But this will take some time
 ```
+
 
 
 A package may have several *dependencies*; other R packages from which it uses functions or data types (re-using code from other packages is strongly-encouraged). If this is the case, the other R packages will be located and installed too.
@@ -224,11 +246,11 @@ A package may have several *dependencies*; other R packages from which it uses f
 **So long as you stick with the same version of R, you won't need to repeat this install process.**
 
 
-Once a package is installed, the `library` function is used to load a package and make it's functions / data available in your current R session. *You need to do this every time you load a new RStudio session*. Let's go ahead and load the `readr`.
+Once a package is installed, the `library` function is used to load a package and make it's functions / data available in your current R session. *You need to do this every time you load a new RStudio session*. Let's go ahead and load the `readr` so we can import some data.
 
 
 ```{r message=FALSE}
-## tidyverse is a collection of packages for data manipulation and visualisation
+## readr is a packages to import spreadsheets into R
 library(readr)
 ```
 
@@ -236,7 +258,7 @@ library(readr)
 
 # Dealing with data
 
-The [***tidyverse***](https://www.tidyverse.org/) is in fact an eco-system of packages that provides a consistent, intuitive system for data manipulation and visualisation in R.
+The [***tidyverse***](https://www.tidyverse.org/) is an eco-system of packages that provides a consistent, intuitive system for data manipulation and visualisation in R.
 
 
 ![](https://aberdeenstudygroup.github.io/studyGroup/lessons/SG-T2-JointWorkshop/tidyverse.png)
@@ -264,14 +286,10 @@ Assuming the file can be found, we can use `read_csv` to import. Other functions
 gapminder <- read_csv(gapminder_path)
 ```
 
-<div class="alert alert-warning">
+<div class="warning">
 
-**Question: Why would specifying `gapminder_path` as **
-```
-gapminder_path <- "/Users/Anna/Documents/workflows/workshops/r-crash-course/raw_data/gapminder.csv"
-```
-
-**be a bad idea?**
+**Why would specifying `gapminder_path` as **
+`Users/Anna/Documents/workflows/workshops/r-crash-course/raw_data/gapminder.csv` **be a bad idea?** Would you be able to re-run the analysis on another machine?
 
 </div>
 
@@ -292,7 +310,7 @@ gapminder
 
 
 
-We should **always check the data frame that we have created**. Sometimes R will happily read data using an inappropriate function and create an object without raising an error. However, the data might be unsuable. Consider:-
+We should **always check the data frame that we have created**. Sometimes R will happily read data using an inappropriate function and create an object without raising an error. However, the data might be unusable. Consider:-
 
 ```{r}
 test <- read_table(gapminder_path)
@@ -312,12 +330,22 @@ Quick sanity checks can also be performed by inspecting details in the environme
 head(gapminder)
 ```
 
+<div class="warning">
+We have used a nice, clean, dataset as our example for the workshop. Other datasets out in the wild might not be so ameanable for analysis in R. If your data look like this, you might have problems:-
+<img src="https://datacarpentry.org/2015-05-29-great-plains/spreadsheet-ecology/fig/2_datasheet_example.jpg"/>
+
+We recommend the Data Carpentry materials on spreadsheet organisation for an overview of common pitfalls - and how to address them
+
+- https://datacarpentry.org/spreadsheet-ecology-lesson/
+
+</div>
+
 
 ## Accessing data in columns
 
 In the next section we will explore in more detail how to control the columns and rows from a data frame that are displayed in RStudio. For now, accessing all the observations from a particular column can be achieved by typing the `$` symbol after the name of the data frame followed by the name of a column you are interested in.
 
-RStudio is able to *"tab-complete"* the column name, so typing the following and presssing the **TAB** key will bring-up a list of possible columns. The contents of the column that you select are then printed to the screen.
+RStudio is able to *"tab-complete"* the column name, so typing the following and pressing the **TAB** key will bring-up a list of possible columns. The contents of the column that you select are then printed to the screen.
 
 ```{r eval=FALSE}
 gapminder$c
@@ -329,15 +357,17 @@ Rather than merely printing to the screen we can also create a variable
 country_vec <- gapminder$country
 ```
 
-******
-******
-******
+
 
 ## Creating a new R notebook
 
 You will probably want to create a new *R notebook* file to perform your analysis. This can be done by following the menus:-
 
+<div class="information">
+
 **File -> New File -> R notebook** 
+
+</div>
 
 A new pane should open that includes some example code. You can delete everything **apart from lines 1 to 4**
 
@@ -347,15 +377,18 @@ You can now insert R code chunks using the insert menu.
 
 Before generating a report you will need to save the file with the menu **File -> Save**. You will then be able to create a report using the Preview button. N.B. you may need to install extra software before doing this.
 
+******
+******
+******
 
 ### Exercise before the next session
 
-
+<div class="exercise">
 - Create a new R notebook using the instructions above and create a code chunk to read the `gapminder.csv` file. Answer the following questions and generate a report 
   + The function `tail` is similar to `head` except it prints the *last* lines in a file. Use this function to print the last *10* lines in the data frame (you will have to consult the help on `tail` to see how to change the default arguments.)
   + What is the largest observed population?
   + What is the lowest life expectancy
-
+</div>
 
 
 ******
@@ -364,8 +397,8 @@ Before generating a report you will need to save the file with the menu **File -
 
 
 
-<div class="alert alert-warning">
+<div class="exercise">
 
-**Question: Familiarise yourself with the contents of the data frame. What numerical summaries can you produce from the dataset (e.g. average life expectancy per-year, countries that are most wealthy etc) and what plots might be of interest? Discuss with your neighbours**
+(Optional): Familiarise yourself with the contents of the data frame. What numerical summaries can you produce from the dataset (e.g. average life expectancy per-year, countries that are most wealthy etc) and what plots might be of interest? Discuss with your neighbours
 
 </div>
