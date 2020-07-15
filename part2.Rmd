@@ -25,7 +25,7 @@ gapminder <- read_csv("raw_data/gapminder.csv")
 ```
 
 
-## Manipulating data
+# Manipulating data
 
 We are going to use functions from the **`dplyr`** package to **manipulate the data frame** we have just created. It is perfectly possible to work with data frames using the functions provided as part of "*base R*". However, many find it easy to read and write code using `dplyr`.
 
@@ -33,9 +33,11 @@ There are **many more functions available in `dplyr`** than we will cover today.
 
 <div class="information">
 
-- [dplyr cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+- [dplyr cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf). The cheatsheet is also available through the RStudio Help menu.
 
 </div>
+
+Before using any of these functions, we need to load the library:- 
 
 ```{r message=FALSE}
 library(dplyr)
@@ -336,12 +338,16 @@ On top of this central philosophy ggplot2 has:
 - Large developer base – Many libraries extending its flexibility.
 - Large user base – Great documentation and active mailing list.
 
+<div class="information">
 
-It is always useful to think about the message you want to convey and the appropriate plot before writing any R code. Resources like [this](https://www.data-to-viz.com/) should help.
+It is always useful to think about the message you want to convey and the appropriate plot before writing any R code. Resources like [data-to-viz.com](https://www.data-to-viz.com/) should help.
+</div>
 
 With some practice, `ggplot2` makes it easier to go from the figure you are imagining in our head (or on paper) to a publication-ready image in R.
 
-As with `dplyr`, we won't have time to cover all details of `ggplot2`. This is however a useful [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) that can be printed as a reference.
+<div class="information">
+As with `dplyr`, we won't have time to cover all details of `ggplot2`. This is however a useful [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) that can be printed as a reference. The cheatsheet is also available through the RStudio Help menu.
+</div>
 
 ## Basic plot types
 

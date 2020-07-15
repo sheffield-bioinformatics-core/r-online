@@ -64,6 +64,8 @@ filter(gapminder, continent!="Oceania", year %in% c(1997,2002,2007)) %>%
 
 # Summarising and grouping with dplyr
 
+
+
 The `summarise` function can take any R function that takes a vector of values (i.e. a column from a data frame) and returns a single value. Some of the more useful functions include:
 
 - `min` minimum value
@@ -229,33 +231,121 @@ inner_join(gene_results, gene_anno)
 ******
 ******
 
+# Wrap-up
 
+We have introduced a few of the essential packages from the R tidyverse that can help with data manipulation and visualisation.
 
-### Exercise (open-ended)
+![](https://aberdeenstudygroup.github.io/studyGroup/lessons/SG-T2-JointWorkshop/tidyverse.png)
+Hopefully you will feel more confident about importing your data into R and producing some useful visualisations. You will probably have questions regarding the analysis of your own data. Some good starting points to get help are listed below.
 
-- Data for global COVID-19 cases are available online from CSSE at Johns Hopkins University on their github repository
-- Download these data to your computer (URL below)
-- Transform these data into "long" format for analysis using the `gather` function from the `tidyr` package
-- Explore the data and generate some plots you may have seen in the media
-    + e.g. trajectory of cases over time
-- Join to the `gapminder` dataset to scale the number of cases by population size
+<div class="information">
 
+- [tidyverse homepage](https://www.tidyverse.org/)
+- [R graph gallery](https://www.r-graph-gallery.com/)
 
-******
-******
-******
+</div>
+
+To finish the workshop we will look at the analysis of some relevant data that we can import into R and analyse with the tools from the workshop.
+
+## Introducing the COVID-19 data 
+
+Data for global COVID-19 cases are available online from CSSE at Johns Hopkins University on their github repository.
+
+<div class="information">
+[github](www.github.com) is an excellent way of making your code and analysis available for others to reuse and share. Private repositories with restricted access are also available. Here is a useful beginners guide.
+
+-[Friendly github intro](https://kirstiejane.github.io/friendly-github-intro/)
+
+</div>
+
+R is capable of downloading files to our own machine so we can analyse them. We need to know the URL (for the COVID data we can find this from github, or use the address below) and can specify what to call the file when it is downloaded.
 
 ```{r}
-if(!require(tidyr)) install.packages("tidyr")
-
 download.file("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",destfile = "time_series_covid19_confirmed_global.csv")
-
-covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
-  rename(country = `Country/Region`) %>% 
-  tidyr::gather(Date, Cases, 5:last_col()) %>% 
-  mutate(Date=as.Date(Date,"%m/%d/%y"))
 
 ```
 
+We can use the `read_csv` function as before to import the data and take a look. We can see the basic structure of the data is one row for each country / region and columns for cases on each day. 
 
+```{r}
+covid <- read_csv("time_series_covid19_confirmed_global.csv")
+covid
+```
+
+We can potentially join these data to `gapminder`, but it would be beneficial to have one column name in common between both files. We can `rename` the `Country/Region` column of our new data frame to match `gapminder`.
+
+```{r}
+covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+  rename(country = `Country/Region`) 
+covid
+```
+
+Much of the analysis of this dataset has looked at trends over time (e.g. increasing /decreasing case numbers, comparing trajectories). As we know by now, the `ggplot2` package allows us to map columns (variables) in our dataset to aspects of the plot. 
+
+In other words, we would expect to create plots by writing code such as:-
+
+
+```
+ggplot(covid, aes(x = Date, y =...)) + ...
+```
+
+Unfortunately such plots are not possible with the data in it's current format. Counts for each date are containing in a different column. What we require is a column to indicate the date, and the corresponding count in the next column. Such data arrangements are known as *long data*; whereas we have *wide* data. Fortunately we can convert between the two using the `tidyr` package (also part of tidyverse).
+
+```{r eval=FALSE}
+## install tidyr if you don't already have it
+install.packages("tidyr")
+```
+
+
+<div class="information">
+
+For more information on *tidy data*, and how to convert between long and wide data, see
+
+https://r4ds.had.co.nz/tidy-data.html
+
+</div>
+
+```{r}
+
+covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+  rename(country = `Country/Region`) %>% 
+  tidyr::pivot_longer(5:last_col(),names_to="Date", values_to="Cases")
+covid
+```
+
+Another point to note is that the dates are not in an internationally recognised format, which could cause a problem for some visualisations that rely on date order. We can fix by explictily converting to YYYY-MM-DD format.
+
+```{r}
+covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+  rename(country = `Country/Region`) %>% 
+  tidyr::pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
+    mutate(Date=as.Date(Date,"%m/%d/%y"))
+covid
+```
+
+The number of new cases per-day can also be added to the table by using the `lag` function from `dplyr`.
+
+```{r}
+covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+  rename(country = `Country/Region`) %>% 
+  tidyr::pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
+  mutate(Date=as.Date(Date,"%m/%d/%y")) %>% 
+  mutate(DailyCases = Cases - dplyr::lag(Cases,default = 0))  
+covid
+```
+
+
+Exercise
+<div class="exercise">
+What plots and summaries can you make from these data?
+
+- Plotting the number of cases over time for certain countries
+- For each continent, what countries have the highest number of cases?
+- Can you normalise for population size (using 2007 population figures)?
+
+</div>
+
+```{r}
+
+```
 

@@ -17,6 +17,13 @@ editor_options:
 
 These materials are adapted from a course developed at Cancer Research Uk Cambridge Institute by Mark Dunning, Matthew Eldridge and Thomas Carroll.
 
+# Aims and objectives
+
+<div class="warning">
+Although R is well-regarded as a tool for performing statistical analysis, this workshop will not explicitly teach stats. Instead we give introduce the tools that we allow you to manipulate and interrogate your data into a form with which you can execute statistical tests.
+
+</div>
+
 # Using these notes
 
 <div class="exercise">
