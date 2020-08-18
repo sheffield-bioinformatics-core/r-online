@@ -5,7 +5,7 @@ date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
 output: 
   html_notebook: 
     toc: yes
-    toc_float: yes
+    toc_flosat: yes
     css: stylesheets/styles.css
 editor_options: 
   chunk_output_type: inline
@@ -313,7 +313,7 @@ covid <- read_csv("time_series_covid19_confirmed_global.csv") %>%
 covid
 ```
 
-Another point to note is that the dates are not in an internationally recognised format, which could cause a problem for some visualisations that rely on date order. We can fix by explictily converting to YYYY-MM-DD format.
+Another point to note is that the dates are not in an internationally recognised format, which could cause a problem for some visualisations that rely on date order. We can fix by explicitly converting to YYYY-MM-DD format.
 
 ```{r}
 covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
