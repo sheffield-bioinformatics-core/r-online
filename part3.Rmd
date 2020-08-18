@@ -335,7 +335,7 @@ covid
 ```
 
 
-Exercise
+### Exercise 
 <div class="exercise">
 What plots and summaries can you make from these data?
 
