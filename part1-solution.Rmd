@@ -1,22 +1,27 @@
 ---
-title: "R Notebook"
+title: "Solutions to exercise"
 output: html_notebook
 ---
 
+# Part 1 Solution
+
+Load the readr library and read the gapminder raw data
+
 ```{r}
 library(readr)
+## check that the file is present
 file.exists("raw_data/gapminder.csv")
 gapminder <- read_csv("raw_data/gapminder.csv")
 
 ```
 
-Print last 10 rows of the table
+Print last 10 rows of the table using the tail function. The argument n needs to be changed from the default
 
 ```{r}
 tail(gapminder,n=10)
 ```
 
-What is the largest population?
+What is the largest population? We can assess the pop column using the $ symbol
 
 ```{r}
 max(gapminder$pop)
