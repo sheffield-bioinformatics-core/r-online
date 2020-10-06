@@ -618,7 +618,7 @@ More themes are supported by the `ggthemes` package. You can make your plots loo
 ******
 ******
 
-See the online notes for a suggestion:-
+An example plot is shown on the compiled notes.
 
 ![](images/tile_example.png)
 
