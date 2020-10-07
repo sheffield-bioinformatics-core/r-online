@@ -5,7 +5,7 @@ date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
 output: 
   html_notebook: 
     toc: yes
-    toc_flosat: yes
+    toc_float: yes
     css: stylesheets/styles.css
 editor_options: 
   chunk_output_type: inline
