@@ -18,7 +18,7 @@ editor_options:
 
 Lets make sure we have read the gapminder data into R and have the relevant packages loaded.
 
-```{r message=FALSE}
+```{r message=FALSE,warning=FALSE}
 library(readr)
 gapminder <- read_csv("raw_data/gapminder.csv")
 library(dplyr)
@@ -106,7 +106,7 @@ gapminder %>%
 
 If we want to summarise several columns we can use the convenient `summarise_all` function. However, this will return `NA` values for columns that do not contain numeric values.
 
-```{r warning=FALSE}
+```{r warning=FALSE,message=FALSE}
 gapminder %>% 
   group_by(continent,year) %>% 
   summarise_all(mean)
@@ -116,7 +116,7 @@ gapminder %>%
 
 The nice thing about `summarise` is that it can followed up by any of the other `dplyr` verbs that we have met so far (`select`, `filter`, `arrange`..etc). As the `country` column of the previous output containing missing values we can exclude it from further processing.
 
-```{r warning=FALSE}
+```{r warning=FALSE,message=FALSE}
 gapminder %>% 
   group_by(continent,year) %>% 
   summarise_all(mean) %>% 
@@ -125,7 +125,7 @@ gapminder %>%
 
 Returning to the correlation between life expectancy and year, we can summarise as follows:-
 
-```{r}
+```{r,message=FALSE}
 gapminder %>%     
     group_by(country) %>% 
     summarise(Correlation = cor(year , lifeExp))
@@ -133,7 +133,7 @@ gapminder %>%
 
 We can then arrange the table by the correlation to see which countries have the lowest correlation
 
-```{r}
+```{r,message=FALSE}
 gapminder %>%      
     group_by(country) %>% 
     summarise(Correlation = cor(year , lifeExp)) %>% 
@@ -142,7 +142,7 @@ gapminder %>%
 
 We can filter the results to find observations of interest
 
-```{r}
+```{r,message=FALSE}
 gapminder %>%      
     group_by(country) %>% 
     summarise(Correlation = cor(year , lifeExp)) %>% 
@@ -306,10 +306,10 @@ https://r4ds.had.co.nz/tidy-data.html
 </div>
 
 ```{r}
-
+library(tidyr)
 covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
-  tidyr::pivot_longer(5:last_col(),names_to="Date", values_to="Cases")
+  pivot_longer(5:last_col(),names_to="Date", values_to="Cases")
 covid
 ```
 
@@ -318,19 +318,20 @@ Another point to note is that the dates are not in an internationally recognised
 ```{r}
 covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
-  tidyr::pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
+  pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
     mutate(Date=as.Date(Date,"%m/%d/%y"))
 covid
 ```
 
-The number of new cases per-day can also be added to the table by using the `lag` function from `dplyr`.
+The number of new cases per-day can also be added to the table by using the `lag` function from `dplyr`. However, we need to stop negative values appearing by using the `pmax` function to make 0 the lowest possible value.
 
 ```{r}
 covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
-  tidyr::pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
+  pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
   mutate(Date=as.Date(Date,"%m/%d/%y")) %>% 
-  mutate(DailyCases = Cases - dplyr::lag(Cases,default = 0))  
+  group_by(country) %>% 
+  mutate(DailyCases = Cases - lag(Cases,default = 0)) %>% mutate(DailyCases = pmax(DailyCases,0))  
 covid
 ```
 
