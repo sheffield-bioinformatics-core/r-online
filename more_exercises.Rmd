@@ -12,6 +12,8 @@ editor_options:
 ---
 <img src="images/logo-sm.png" style="position:absolute;top:40px;right:10px;" width="200" />
 
+
+
 # The Dataset
 
 We will illustrate some of the main functions from tidyverse with example data from [COSMIC](https://cancer.sanger.ac.uk/cosmic). An example file is freely available, but you will need to register for full-size file. This is an archive of files. Each has 100 lines of the the full files (that you have to register to access)
@@ -41,9 +43,34 @@ We import data so that we can analyse it in R using one of the various functions
 </div>
 
 ```{r}
-
+library(readr)
 cosmic <- readr::read_tsv("cosmic_example/CosmicMutantExport.tsv")
+cosmic
+```
 
+## Column names containing spaces
+
+When using `select` we can use the column name without quotation marks to print that column. Column names that contain a space present a bit of an issue for R:-
+
+```{r eval=FALSE}
+library(dplyr)
+select(cosmic, Gene name)
+```
+
+This can be avoiding by putting the desired column name inside ``` symbols.
+
+```{r}
+library(dplyr)
+select(cosmic, `Gene name`)
+```
+
+
+```{r}
+select(cosmic, `Gene name`, `Accession Number`)
+```
+
+```{r}
+select(cosmic, `Gene name`:`Sample name`)
 ```
 
 # Exercise2
@@ -52,8 +79,66 @@ Practice using the `select` function
 
 <div class="exercise">
 
-- Select the last five columns from the table
-- Select all columns that contain information on the tumour Histology
--
+- Select the first five, and the last five columns from the table
+- Select all columns that contain information on the tumour Histology (taking into account the different capitalisation)
 
 </div>
+
+
+# Exercise3
+
+Practice using `filter`
+
+<div class="exercise">
+
+Restrict the data to..
+
+- Mutations that occur in the breast or prostate
+- Mutations that occur in patients under 50
+- Mutations in the gene `HFE`
+- Mutations in the ovary or breast that are part of the TCGA dataset (encoded in the `Sample name` column)
+
+</div>
+
+```{r}
+
+
+```
+
+## Separating columns
+
+```{r}
+library(tidyr)
+separate(cosmic, `Gene name`, into=c("SYMBOL","ENSEMBL"))
+```
+
+# Exercise4
+
+<div class="exercise">
+
+- Separate the position of the mutation into chromosome start and end
+- Add the text `chr` to the beginning of each chromosome name. Save this as a new variable to be used later
+  + `HINT` look-up the `paste0` function
+
+```{r}
+
+
+```
+
+# Exercise5
+
+- Arrange the mutations in genome position order (chromosome, then start)
+- Look at the output, does it seem to be in the correct order? What might the problem be?
+
+```{r}
+separate(cosmic, `Mutation genome position`, into = c("chromosome","start","end")) %>% 
+  mutate(chromosome = paste0("chr",chromosome)) %>% 
+  arrange(chromosome,start)
+
+```
+```{r}
+
+```
+
+
+
