@@ -1,0 +1,59 @@
+---
+title: "Extra Exercises"
+author: "Mark Dunning"
+date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
+output: 
+  html_notebook: 
+    toc: yes
+    toc_float: yes
+    css: stylesheets/styles.css
+editor_options: 
+  chunk_output_type: inline
+---
+<img src="images/logo-sm.png" style="position:absolute;top:40px;right:10px;" width="200" />
+
+# The Dataset
+
+We will illustrate some of the main functions from tidyverse with example data from [COSMIC](https://cancer.sanger.ac.uk/cosmic). An example file is freely available, but you will need to register for full-size file. This is an archive of files. Each has 100 lines of the the full files (that you have to register to access)
+
+`download.file` is an R *function* for downloading a file into your *working directory* (the directory where R is currently looking to open files from, and save files to).
+
+```{r eval=FALSE}
+download.file("https://cog.sanger.ac.uk/cosmic/taster/example_grch38_cosmic.tar",destfile = "example_grch38_cosmic.tar")
+```
+
+We use R function, `untar` to extract files from the archive. You should see that a `cosmic_example` directory has been created.
+
+```{r eval=FALSE}
+untar(tarfile = "example_grch38_cosmic.tar",exdir="cosmic_example")
+```
+
+We import data so that we can analyse it in R using one of the various functions that are called `read_..`. The choice depends on the type of file (csv, tsv, etc...)
+
+# Exercise1
+
+<div class="exercise">
+
+- Which function from `readr` would you use the read the file `CosmicMutantExport.tsv` into R?
+- Import the file `CosmicMutantExport.tsv` into R
+- How many rows and columns are in the data frame you create
+
+</div>
+
+```{r}
+
+cosmic <- readr::read_tsv("cosmic_example/CosmicMutantExport.tsv")
+
+```
+
+# Exercise2
+
+Practice using the `select` function 
+
+<div class="exercise">
+
+- Select the last five columns from the table
+- Select all columns that contain information on the tumour Histology
+-
+
+</div>
