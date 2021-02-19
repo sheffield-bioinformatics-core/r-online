@@ -81,8 +81,8 @@ select(gapminder, lifeExp:gdpPercap)
 There are a number of helper functions can be employed if we are unsure about the exact name of the column.
 
 ```{r}
-select(gapminder, starts_with("life"))
-select(gapminder, contains("pop"))
+select(gapminder, starts_with("co"))
+select(gapminder, contains("life"))
 # selecting the last and penultimate columns
 select(gapminder, last_col(1),last_col())
 ```
