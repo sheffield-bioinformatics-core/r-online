@@ -341,12 +341,15 @@ covid
 What plots and summaries can you make from these data?
 
 - Plotting the number of cases over time for certain countries
-- For each continent, what countries have the highest number of cases?
 - Can you normalise for population size (using 2007 population figures)?
+  + e.g. cases per 100,000
+- Which European countries have the highest number of cases per 100,000 population
+  + e.g. [https://www.statista.com/statistics/1110187/coronavirus-incidence-europe-by-country/](https://www.statista.com/statistics/1110187/coronavirus-incidence-europe-by-country/)
 
 </div>
 
 ```{r}
 
+ 
 ```
 

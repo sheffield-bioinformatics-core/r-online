@@ -59,6 +59,16 @@ filter(gapminder, year ==  2007, continent=="Europe") %>%
   ggplot(aes(x = Date, y = country,fill=Cases)) + geom_tile()
   
 ```
+Try to make example similar to [https://www.statista.com/statistics/1110187/coronavirus-incidence-europe-by-country/](https://www.statista.com/statistics/1110187/coronavirus-incidence-europe-by-country/). We're not using up-to-date figures for population so there will be some differences. Also not all countries appear in gapminder
+
+```{r}
+filter(gapminder, year == 2007,continent=="Europe") %>% 
+  left_join(covid) %>% 
+  filter(Date == "2021-02-14") %>% 
+  mutate(Cases = round(Cases / (pop / 1e5))) %>% 
+  arrange(desc(Cases)) %>% 
+  select(country, Cases)
+```
 
 
 Compare average number of cases per-continent
