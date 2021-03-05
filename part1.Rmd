@@ -50,7 +50,7 @@ Let’s try this now!
 print("Hello World")
 ```
 
-R can be used as a calculator to computer simple sums
+R can be used as a calculator to compute simple sums
 
 
 ```{r}
