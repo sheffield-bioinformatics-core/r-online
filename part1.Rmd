@@ -50,7 +50,7 @@ Let’s try this now!
 print("Hello World")
 ```
 
-R can be used as a calculator to computer simple sums
+R can be used as a calculator to compute simple sums
 
 
 ```{r}
@@ -120,12 +120,6 @@ x <- myNumber
 x
 ```
 
-We can modify the contents of a variable:
-
-```{r}
-myNumber <- myNumber + sqrt(16)
-myNumber
-```
 
 When we are feeling lazy we might give our variables short names (`x`, `y`, `i`...etc), but a better practice would be to give them meaningful names. There are some restrictions on creating variable names. They cannot start with a number or contain characters such as `.` and '-'. Naming variables the same as in-built functions in R, such as `c`, `T`, `mean` should also be avoided.
 
@@ -363,9 +357,22 @@ gapminder$c
 Rather than merely printing to the screen we can also create a variable
 
 ```{r}
-country_vec <- gapminder$country
+years <- gapminder$year
 ```
 
+We can then use some of the functions we have seen before
+
+```{r}
+min(years)
+max(years)
+median(years)
+```
+
+Although we don't have to save the values in the column as a variable first
+
+```{r}
+min(gapminder$year)
+```
 
 
 ## Creating a new R notebook

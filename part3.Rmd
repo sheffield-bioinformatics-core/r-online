@@ -323,15 +323,28 @@ covid <- read_csv("time_series_covid19_confirmed_global.csv") %>%
 covid
 ```
 
-The number of new cases per-day can also be added to the table by using the `lag` function from `dplyr`. However, we need to stop negative values appearing by using the `pmax` function to make 0 the lowest possible value.
+Another useful modification is to make sure only one row exists for each country. If we look at the data for some countries (e.g. China and UK) there are different entries for provinces and oversees territories.
+
+```{r}
+## the count function tabulates the number of observations in a particular column
+
+filter(covid, country == "China") %>% 
+  count(`Province/State`)
+```
+```{r}
+filter(covid, country == "United Kingdom") %>% 
+  count(`Province/State`)
+```
+So we can change the Cases to be the `sum` of all cases for that country on a particular day. We can do this using the `group_by` and `summarise` functions from above
 
 ```{r}
 covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
   pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
   mutate(Date=as.Date(Date,"%m/%d/%y")) %>% 
-  group_by(country) %>% 
-  mutate(DailyCases = Cases - lag(Cases,default = 0)) %>% mutate(DailyCases = pmax(DailyCases,0))  
+  group_by(country,Date) %>% 
+  summarise(Cases = sum(Cases))
+
 covid
 ```
 
