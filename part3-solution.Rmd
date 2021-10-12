@@ -3,6 +3,36 @@ title: "Covid Examples"
 output: html_notebook
 ---
 
+# In-class exercise
+
+```{r}
+### Load the libraries will we need
+library(readr)
+library(dplyr)
+library(ggplot2)
+```
+
+Read the data and check
+
+```{r}
+gapminder <- read_csv("raw_data/gapminder.csv")
+head(gapminder)
+```
+Summarise the gapminder data in an appropriate manner to produce a plot to show the change in average gdpPercap for each continent over time.
+
+```{r}
+## advisable to do the summary first and check the result
+
+group_by(gapminder, continent, year) %>% 
+  summarise(GDP = mean(gdpPercap))
+```
+```{r}
+group_by(gapminder, continent, year) %>% 
+  summarise(GDP = mean(gdpPercap)) %>% 
+  ggplot(aes(x = year, y = GDP, fill=continent)) + geom_col() + facet_wrap(~continent)
+```
+
+
 # Some examples of visualising the Covid-19 dataset using `dplyr` and `ggplot2`
 
 First load the required libraries
