@@ -19,7 +19,124 @@ gapminder <- read_csv("raw_data/gapminder.csv")
 head(gapminder)
 ```
 
-## Task 1
+
+## In-class exercises
+
+Create a subset of the data where the population less than a million in the year 2002
+
+```{r}
+filter(gapminder, pop < 1e6, year == 2002)
+```
+
+Create a subset of the data where the life expectancy is greater than 75 in the years prior to 1987
+
+```{r}
+filter(gapminder, lifeExp > 75, year < 1987)
+```
+
+Create a subset of the European data where the life expectancy is between 75 and 80 in the years 2002 or 2007.
+
+```{r}
+filter(gapminder, continent == "Europe", lifeExp > 75, lifeExp < 80 , year == 2002 | year == 2007)
+```
+
+Write a workflow to do the following:- 
+
+- Filter the data to include just observations from the year 2002
+- Re-arrange the table so that the countries from each continent are ordered according to decreasing wealth. i.e. the wealthiest countries first
+- Select all the columns apart from year
+- Write the data frame out to a file in out_data/ folder
+
+```{r}
+# Less-efficient solution before pipes are introduced
+
+# create out_data folder before we start (no warning given if it already exists)
+dir.create("out_data", showWarnings = FALSE)
+
+gapminder2 <- filter(gapminder, year == 2002)
+gapminder3 <- arrange(gapminder2, continent, desc(gdpPercap))
+gapminder4 <- select(gapminder3, -year)
+write_csv(gapminder4, "out_data/gapminder_2002.csv")
+```
+
+Re-written using pipes
+
+```{r}
+filter(gapminder, year == 2002) %>% 
+  arrange(continent, desc(gdpPercap)) %>% 
+  select(-year) %>% 
+write_csv("out_data/gapminder_piped_2002.csv")
+
+```
+
+
+The violin plot is a popular alternative to the boxplot. Create a violin plot with geom_violin to visualise the differences in GDP between different continents.
+
+```{r}
+ggplot(gapminder, aes(x = continent, y = gdpPercap)) + geom_violin()
+```
+
+Create a subset of the gapminder data frame containing just the rows for your country of birth
+
+```{r}
+
+# don't forget that R is case-sensitive!
+
+uk_data <- filter(gapminder, country == "United Kingdom")
+```
+
+Has there been an increase in life expectancy over time?
+ - visualise the trend using a scatter plot (geom_point), line graph (geom_line) or smoothed line (geom_smooth).
+
+```{r}
+ggplot(uk_data, aes(x = year, y = lifeExp)) + geom_point()
+```
+
+```{r}
+ggplot(uk_data, aes(x = year, y = lifeExp)) + geom_line()
+```
+
+```{r}
+ggplot(uk_data, aes(x = year, y = lifeExp)) + geom_smooth()
+```
+
+
+```{r}
+## can combine all plots
+ggplot(uk_data, aes(x = year, y = lifeExp)) + geom_point() + geom_smooth()
+```
+
+Note: this exercise could also make use of the piping technique
+
+```{r}
+filter(gapminder, country == "United Kingdom") %>% 
+  ggplot(aes(x = year, y = lifeExp)) + geom_point() + geom_smooth()
+```
+What happens when you modify the geom_boxplot example to compare the gdp distributions for different years?
+- Look at the message ggplot2 prints above the plot and try to modify the code to give a separate boxplot for each year
+
+```{r}
+# this is how we might expect the code to look like
+ggplot(gapminder, aes(x = year, y = gdpPercap)) + geom_boxplot()
+```
+
+The previous output hints that you might want to group by year - otherwise it thinks that year is a numerical variable
+
+```{r}
+ggplot(gapminder, aes(x = year, y = gdpPercap, group=year)) + geom_boxplot()
+```
+You will often see this alternative of using the as.factor function to make year into a categorical variable.
+
+```{r}
+ggplot(gapminder, aes(x = as.factor(year), y = gdpPercap)) + geom_boxplot()
+
+```
+
+## Homework
+
+
+
+### Task 1
 
 Add an extra column; the first letter of each country name. Assigning a new variable on each line
 
@@ -37,7 +154,7 @@ gapminder %>%
   filter(FirstLetter == "Z")
 ```
 
-## Task 2 - Heatmap of life expectancy
+### Task 2 - Heatmap of life expectancy
 
 ```{r}
 ## Get the European countries
