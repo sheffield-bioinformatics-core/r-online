@@ -229,7 +229,7 @@ dir.create("out_data",showWarnings = FALSE)
 byWealth <- arrange(gapminder, desc(gdpPercap))
 # check the output before writing
 head(byWealth)
-write_csv(byWealth, path = "out_data/by_wealth.csv")
+write_csv(byWealth, file = "out_data/by_wealth.csv")
 ```
 
 We will now try an exercise that involves using several steps of these operations
