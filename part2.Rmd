@@ -146,11 +146,6 @@ Or just by separating conditional statements by a `,`
 filter(gapminder, country == "Zambia", lifeExp < 40)
 ```
 
-<div class="warning">
-
-</div>
-
-
 ******
 ******
 ******
@@ -166,7 +161,7 @@ filter(gapminder, country == "Zambia", lifeExp < 40)
 ******
 
 ```{r}
-
+filter(gapminder, between(lifeExp, 75,80))
 
 
 
