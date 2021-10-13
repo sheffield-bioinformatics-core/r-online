@@ -134,13 +134,7 @@ filter(gapminder, country %in% c("Zambia", "Zimbabwe"))
 ```
 
 
-We can require that both tests are `TRUE`,  e.g. which years in Zambia had a life expectancy less than 40, by using an *and* (`&`) operation.
-
-```{r}
-filter(gapminder, country == "Zambia" & lifeExp < 40)
-```
-
-Or just by separating conditional statements by a `,`
+We can require that both tests are `TRUE`,  e.g. which years in Zambia had a life expectancy less than 40, by separating conditional statements by a `,`. This performs an *AND* test so only rows that meet both conditions are returned.
 
 ```{r}
 filter(gapminder, country == "Zambia", lifeExp < 40)
