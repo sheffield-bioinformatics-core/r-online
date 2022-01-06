@@ -472,6 +472,14 @@ Our plots are a bit dreary at the moment, but one way to add colour is to add a 
 ggplot(gapminder, aes(x = gdpPercap, y=lifeExp)) + geom_point(col="red")
 ```
 
+```{r}
+# Use the Hex codes from Farrow and Ball: https://convertingcolors.com/list/farrow-ball.html
+# (cook's blue)
+
+ggplot(gapminder, aes(x = gdpPercap, y=lifeExp)) + geom_point(col="#6A90B4")
+```
+
+
 However, a powerful feature of `ggplot2` is that colours are treated as aesthetics of the plot. In other words we can use a column in our dataset.
 
 Let's say that we want points on our plot to be coloured according to continent. We add an extra argument to the definition of aesthetics to define the mapping. `ggplot2` will even decide on colours and create a legend for us.
@@ -549,7 +557,7 @@ p <- ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point
 
 ```{r}
 # We can also change the text displayed above the legend with the name parameter.
-p + scale_color_brewer(name="Continent", palette = "Set2")
+p + scale_color_manual(values=brewer.pal(6,"Set2"))
 ```
 
 Or we can even specify our own colours; such as The University of Sheffield branding colours
@@ -562,6 +570,15 @@ my_pal <- c(rgb(0,159,218,maxColorValue = 255),
             rgb(190,214,0,maxColorValue = 255))
 p + scale_color_manual(values=my_pal)
 
+```
+**NEW**:- A set of palettes based on works in the Metropolitan Museum of Art (New York) has been made available.
+
+https://github.com/BlakeRMills/MetBrewer
+
+```{r}
+install.packages("MetBrewer")
+library(MetBrewer)
+p + scale_color_manual(values=met.brewer(name = "Greek"))
 ```
 
 
@@ -591,6 +608,13 @@ p + theme_bw()
 ```
 
 More themes are supported by the `ggthemes` package. You can make your plots look like the Economist, Wall Street Journal or Excel (**but please don't do this!**)
+
+```{r}
+install.packages("ggthemes")
+library(ggthemes)
+p + theme_excel()
+```
+
 
 ******
 ******
