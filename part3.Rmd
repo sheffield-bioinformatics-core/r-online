@@ -261,21 +261,21 @@ Data for global COVID-19 cases are available online from CSSE at Johns Hopkins U
 R is capable of downloading files to our own machine so we can analyse them. We need to know the URL (for the COVID data we can find this from github, or use the address below) and can specify what to call the file when it is downloaded.
 
 ```{r}
-download.file("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",destfile = "time_series_covid19_confirmed_global.csv")
+download.file("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",destfile = "raw_data/time_series_covid19_confirmed_global.csv")
 
 ```
 
 We can use the `read_csv` function as before to import the data and take a look. We can see the basic structure of the data is one row for each country / region and columns for cases on each day. 
 
 ```{r}
-covid <- read_csv("time_series_covid19_confirmed_global.csv")
+covid <- read_csv("raw_data/time_series_covid19_confirmed_global.csv")
 covid
 ```
 
 We can potentially join these data to `gapminder`, but it would be beneficial to have one column name in common between both files. We can `rename` the `Country/Region` column of our new data frame to match `gapminder`.
 
 ```{r}
-covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+covid <- read_csv("raw_data/time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) 
 covid
 ```
@@ -307,7 +307,7 @@ https://r4ds.had.co.nz/tidy-data.html
 
 ```{r}
 library(tidyr)
-covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+covid <- read_csv("raw_data/time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
   pivot_longer(5:last_col(),names_to="Date", values_to="Cases")
 covid
@@ -316,7 +316,7 @@ covid
 Another point to note is that the dates are not in an internationally recognised format, which could cause a problem for some visualisations that rely on date order. We can fix by explicitly converting to YYYY-MM-DD format.
 
 ```{r}
-covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+covid <- read_csv("raw_data/time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
   pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
     mutate(Date=as.Date(Date,"%m/%d/%y"))
@@ -330,15 +330,14 @@ Another useful modification is to make sure only one row exists for each country
 
 filter(covid, country == "China") %>% 
   count(`Province/State`)
-```
-```{r}
+
 filter(covid, country == "United Kingdom") %>% 
   count(`Province/State`)
 ```
 So we can change the Cases to be the `sum` of all cases for that country on a particular day. We can do this using the `group_by` and `summarise` functions from above
 
 ```{r}
-covid <- read_csv("time_series_covid19_confirmed_global.csv") %>% 
+covid <- read_csv("raw_data/time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
   pivot_longer(5:last_col(),names_to="Date", values_to="Cases") %>% 
   mutate(Date=as.Date(Date,"%m/%d/%y")) %>% 
