@@ -576,7 +576,9 @@ p + scale_color_manual(values=my_pal)
 https://github.com/BlakeRMills/MetBrewer
 
 ```{r}
-install.packages("MetBrewer")
+## this will check if MetBrewer is already installed, and will only install if it is not found
+
+if(!require("MetBrewer")) install.packages("MetBrewer")
 library(MetBrewer)
 p + scale_color_manual(values=met.brewer(name = "Greek"))
 ```
@@ -610,7 +612,9 @@ p + theme_bw()
 More themes are supported by the `ggthemes` package. You can make your plots look like the Economist, Wall Street Journal or Excel (**but please don't do this!**)
 
 ```{r}
-install.packages("ggthemes")
+## this will check if ggthemes is already installed, and will only install if it is not found
+
+if(!require("ggthemes")) install.packages("ggthemes")
 library(ggthemes)
 p + theme_excel()
 ```
