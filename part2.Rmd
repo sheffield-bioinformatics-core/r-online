@@ -154,13 +154,6 @@ filter(gapminder, country == "Zambia", lifeExp < 40)
 ******
 ******
 
-```{r}
-filter(gapminder, between(lifeExp, 75,80))
-
-
-
-```
-
 
 ### Manipulating column values
 
