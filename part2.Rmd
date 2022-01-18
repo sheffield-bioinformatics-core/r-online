@@ -328,7 +328,7 @@ It is always useful to think about the message you want to convey and the approp
 With some practice, `ggplot2` makes it easier to go from the figure you are imagining in our head (or on paper) to a publication-ready image in R.
 
 <div class="information">
-As with `dplyr`, we won't have time to cover all details of `ggplot2`. This is however a useful [cheatsheet](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf) that can be printed as a reference. The cheatsheet is also available through the RStudio Help menu.
+As with `dplyr`, we won't have time to cover all details of `ggplot2`. This is however a useful [cheatsheet](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf) that can be printed as a reference. The cheatsheet is also available through the RStudio Help menu.
 </div>
 
 ## Basic plot types
