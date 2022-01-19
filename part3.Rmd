@@ -330,9 +330,6 @@ Another useful modification is to make sure only one row exists for each country
 
 filter(covid, country == "China") %>% 
   count(`Province/State`)
-
-filter(covid, country == "United Kingdom") %>% 
-  count(`Province/State`)
 ```
 So we can change the Cases to be the `sum` of all cases for that country on a particular day. We can do this using the `group_by` and `summarise` functions from above
 
