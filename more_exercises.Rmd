@@ -1,5 +1,5 @@
 ---
-title: "Extra Exercises"
+title: "Extra Data and Exercises"
 author: "Mark Dunning"
 date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
 output: 
@@ -14,7 +14,7 @@ editor_options:
 
 
 
-# The Dataset
+# The COSMIC Dataset
 
 We will illustrate some of the main functions from tidyverse with example data from [COSMIC](https://cancer.sanger.ac.uk/cosmic). An example file is freely available, but you will need to register for full-size file. This is an archive of files. Each has 100 lines of the the full files (that you have to register to access)
 
@@ -32,7 +32,7 @@ untar(tarfile = "example_grch38_cosmic.tar",exdir="cosmic_example")
 
 We import data so that we can analyse it in R using one of the various functions that are called `read_..`. The choice depends on the type of file (csv, tsv, etc...)
 
-# Exercise1
+## Exercise1
 
 <div class="exercise">
 
@@ -73,7 +73,7 @@ select(cosmic, `Gene name`, `Accession Number`)
 select(cosmic, `Gene name`:`Sample name`)
 ```
 
-# Exercise2
+## Exercise2
 
 Practice using the `select` function 
 
@@ -85,7 +85,7 @@ Practice using the `select` function
 </div>
 
 
-# Exercise3
+## Exercise3
 
 Practice using `filter`
 
@@ -112,7 +112,7 @@ library(tidyr)
 separate(cosmic, `Gene name`, into=c("SYMBOL","ENSEMBL"))
 ```
 
-# Exercise4
+## Exercise4
 
 <div class="exercise">
 
@@ -125,7 +125,7 @@ separate(cosmic, `Gene name`, into=c("SYMBOL","ENSEMBL"))
 
 ```
 
-# Exercise5
+## Exercise5
 
 - Arrange the mutations in genome position order (chromosome, then start)
 - Look at the output, does it seem to be in the correct order? What might the problem be?
@@ -136,9 +136,222 @@ separate(cosmic, `Mutation genome position`, into = c("chromosome","start","end"
   arrange(chromosome,start)
 
 ```
-```{r}
+
+
+# Clinical data from the TCGA project
+
+This exercise concerns the clinical descriptions of tumours from The Cancer Genome Archive. It was previously downloaded from [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE62944) and has undergone some minor alterations. 
+
+## Part1
+
+The data can be downloaded using the following code:-
+
+
+The data are provided as the file `tcga_clinical.tsv` in the `raw_data` directory of the `r_crash_course.zip` file
+
+<div class="exercise">
+**Exercise**: What function from `readr` would you use to read the file `tcga_clinical.tsv` into R? Read the file in. What are the number of rows and columns?
+
+</div>
+
+You should find that the data frame contains a great deal of columns; far too many to be useful. We would like to keep the columns containing the age of the patient, and the tumour stage in our analysis. Rather than opening-up the file, or `View`ing the file in RStudio, we can use a couple of helper functions to identify the relevant column names.
+
+<div class="exercise">
+**Exercise**: Use the `select` function in conjunction with `contains` and `starts_with` to identify columns that have `age` or `stage` in their name. The code should look like the following (you will need to fill-in the dots).
+
+</div>
+
+```{r eval=FALSE}
+# Complete the code by replacing the ... 
+
+select(..., contains("...."))
+select(..., starts_with("...."))
 
 ```
+
+
+<div class="exercise">
+**Exercise:** Use the `select` function to create a new data frame that contains the following columns. **These are not the actual columns names**
+  - Tumour site
+  - Race
+  - Gender
+  - Age at diagnosis
+  - Dead / Alive Status
+You can add extra columns if you wish
+
+**See below for example output**
+</div>
+
+```{r message=FALSE, echo=FALSE,warning=FALSE}
+library(tidyverse)
+clin <- readr::read_tsv("../raw_data/tcga_clinical.tsv")
+data <- select(clin, 
+                tumor_tissue_site,
+                race,
+                gender,
+                age_at_initial_pathologic_diagnosis,
+                vital_status)
+data
+```
+
+
+
+<div class="exercise">
+**Exercise:** Use the `dplyr` function called `count` to tabulate how which sites are included in the data. Re-arrange the output from `count` using `arrange` to determine the most common type of cancer in the dataset.
+
+**See below for example output**
+</div>
+
+
+```{r echo=FALSE}
+count(data, tumor_tissue_site)
+
+```
+
+<div class="exercise">
+**Exercise**: Not all samples have an entry for tumour type. Use the `filter` function to create a table with valid entries for `tumor_tissue_site`. Create a barplot to show display the number of occurences of each tumour type
+
+HINT: An easy way to make the labels on the x-axis more legible is to use the `coord_flip` function
+
+```{r eval=FALSE}
+ggplot(data, aes(x=...)) + geom_bar() + coord_flip()
+```
+
+**See below for example output**
+</div>
+
+```{r echo=FALSE}
+  filter(data,!is.na(tumor_tissue_site)) %>% 
+  filter(tumor_tissue_site != "[Not Available]") %>% 
+  ggplot(aes(x = tumor_tissue_site)) + geom_bar() + coord_flip()
+```
+
+
+
+
+## Part2
+
+We would like to visualise the age of diagnosis, and eventually compare between different disease types, The code we might think to use initially could look like:-
+
+```{r}
+## assuming your filtered clinical data is called data
+
+ggplot(data, aes(x = age_at_initial_pathologic_diagnosis)) + geom_density()
+```
+This doesn't look like the desired output though. If we re-visit the data frame and print the "age" column we notice that the entries in the column are stored as "chr". i.e. characters or text
+
+
+
+```{r}
+select(data, age_at_initial_pathologic_diagnosis)
+```
+
+This has occurred because some entries are "`[Not Available]`" rather than a number or `NA`. As soon as R finds any text within the column, it treats everything in the column as text.
+
+These entries can be filtered in the same manner as previously (when filtering the tissue type column), but this does not solve the problem entirely. 
+
+```{r}
+data %>% 
+  filter(age_at_initial_pathologic_diagnosis != "[Not Available]") %>% 
+ggplot(aes(x = age_at_initial_pathologic_diagnosis)) + geom_density()
+```
+
+We need to add an additional step which will force R to treat the data in the `age_at_initial_pathologic_diagnosis` column as numerical data. Such a conversion can be done using the `as.numeric` function and the `mutate` function can be used to modify the `age_at_initial_pathologic_diagnosis` column to contain the numeric values
+
+<div class="exercise">
+**Exercise**: Use `mutate` and `as.numeric` to convert the values in `age_at_initial_pathologic_diagnosis` into numbers. You will still need to remove the 
+`[Not Available]` values beforehand. Now try and create the density plot.
+</div>
+
+```{r echo=FALSE}
+data %>% 
+  filter(age_at_initial_pathologic_diagnosis != "[Not Available]") %>% 
+  mutate(age_at_initial_pathologic_diagnosis = as.numeric(age_at_initial_pathologic_diagnosis)) %>% 
+ggplot(aes(x = age_at_initial_pathologic_diagnosis)) + geom_density()
+```
+<div class="exercise">
+**Exercise**: Use the `facet_wrap` function to compare the distribution of ages between different tumour types
+</div>
+
+```{r echo=FALSE}
+data %>% 
+  filter(age_at_initial_pathologic_diagnosis != "[Not Available]") %>% 
+    filter(tumor_tissue_site != "[Not Available]") %>% 
+  mutate(age_at_initial_pathologic_diagnosis = as.numeric(age_at_initial_pathologic_diagnosis)) %>% 
+ ggplot(aes(x = age_at_initial_pathologic_diagnosis)) + geom_density() + facet_wrap(~tumor_tissue_site)
+
+```
+
+<div class="exercise">
+**Exercise**: Do any tumour types have a different age of diagnosis between males and females? Use a boxplot to find out
+</div>
+
+```{r echo=FALSE}
+data %>% 
+  filter(age_at_initial_pathologic_diagnosis != "[Not Available]") %>% 
+    filter(tumor_tissue_site != "[Not Available]") %>% 
+  mutate(age_at_initial_pathologic_diagnosis = as.numeric(age_at_initial_pathologic_diagnosis)) %>% 
+ ggplot(aes(x= gender, y = age_at_initial_pathologic_diagnosis)) + geom_boxplot() + facet_wrap(~tumor_tissue_site)
+```
+
+Lets now look at gender split for each cancer type. As a first step, we can group the data by gender and tissue type and obtain counts.
+
+```{r}
+data %>% 
+  group_by(tumor_tissue_site,gender) %>% 
+  filter(tumor_tissue_site != "[Not Available]") %>% 
+  summarise(N = n())
+```
+
+These data are ready for plotting, but for comparisons we need to take into account the total number of each tissue type. We can create frequencies rather than absolute numbers by dividing by the total number of cases.
+
+```{r}
+data %>% 
+  group_by(tumor_tissue_site,gender) %>% 
+  filter(tumor_tissue_site != "[Not Available]") %>% 
+  summarise(N = n()) %>% 
+  mutate(freq = N / sum(N))
+```
+
+Note that the order of the grouping is important here. If we reversed it to `gender` then `tumor_tissue_site` the frequencies would be calculated using the total of males of females.
+
+```{r}
+data %>% 
+  group_by(gender,tumor_tissue_site) %>% 
+  filter(tumor_tissue_site != "[Not Available]") %>% 
+  summarise(N = n()) %>% 
+  mutate(freq = N / sum(N))
+```
+
+
+<div class="exercise">
+**Exercise**: Create a plot to show the gender split in cases of each tumor type.
+</div>
+
+```{r echo=FALSE}
+data %>% 
+  group_by(tumor_tissue_site,gender) %>% 
+  filter(tumor_tissue_site != "[Not Available]") %>% 
+  summarise(N = n()) %>% 
+  mutate(freq = N / sum(N)) %>% 
+  ggplot(aes(x = gender, y = freq)) + geom_col() + facet_wrap(~tumor_tissue_site)
+```
+
+<div class="exercise">
+**Exercise**: Create a plot to show the proportion of patients dead or alive for each tumour type
+</div>
+
+
+```{r echo=FALSE}
+data %>% 
+  group_by(tumor_tissue_site,vital_status) %>% 
+  filter(tumor_tissue_site != "[Not Available]") %>% 
+  filter(vital_status != "[Not Available]") %>%
+  summarise(N = n()) %>% 
+  mutate(freq = N / sum(N)) %>% 
+  ggplot(aes(x = vital_status, y = freq)) + geom_col() + facet_wrap(~tumor_tissue_site)
+```
+
 
 
 
