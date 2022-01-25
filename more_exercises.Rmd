@@ -1,5 +1,5 @@
 ---
-title: "Extra Data and Exercises"
+title: "Extra Data, Use-cases and Exercises"
 author: "Mark Dunning"
 date: '`r format(Sys.time(), "Last modified: %d %b %Y")`'
 output: 
@@ -16,21 +16,18 @@ editor_options:
 
 # The COSMIC Dataset
 
-We will illustrate some of the main functions from tidyverse with example data from [COSMIC](https://cancer.sanger.ac.uk/cosmic). An example file is freely available, but you will need to register for full-size file. This is an archive of files. Each has 100 lines of the the full files (that you have to register to access)
+We will illustrate some of the main functions from tidyverse with example data from [COSMIC](https://cancer.sanger.ac.uk/cosmic). An example file is freely available, but you will need to register for full-size file. 
 
 `download.file` is an R *function* for downloading a file into your *working directory* (the directory where R is currently looking to open files from, and save files to).
 
 ```{r eval=FALSE}
-download.file("https://cog.sanger.ac.uk/cosmic/taster/example_grch38_cosmic.tar",destfile = "example_grch38_cosmic.tar")
+## create a more_data folder
+
+dir.create("more_data",showWarnings = FALSE)
+
+download.file("https://github.com/sheffield-bioinformatics-core/r-online/raw/master/more_data/CosmicMutantExport.tsv",destfile = "more_data/CosmicMutantExport.tsv")
 ```
 
-We use R function, `untar` to extract files from the archive. You should see that a `cosmic_example` directory has been created.
-
-```{r eval=FALSE}
-untar(tarfile = "example_grch38_cosmic.tar",exdir="cosmic_example")
-```
-
-We import data so that we can analyse it in R using one of the various functions that are called `read_..`. The choice depends on the type of file (csv, tsv, etc...)
 
 ## Exercise1
 
@@ -42,9 +39,9 @@ We import data so that we can analyse it in R using one of the various functions
 
 </div>
 
-```{r}
+```{r echo=FALSE}
 library(readr)
-cosmic <- readr::read_tsv("cosmic_example/CosmicMutantExport.tsv")
+cosmic <- readr::read_tsv("more_data//CosmicMutantExport.tsv")
 cosmic
 ```
 
@@ -57,7 +54,7 @@ library(dplyr)
 select(cosmic, Gene name)
 ```
 
-This can be avoiding by putting the desired column name inside ``` symbols.
+This can be avoiding by putting the desired column name inside the backtick symbols.
 
 ```{r}
 library(dplyr)
@@ -75,67 +72,91 @@ select(cosmic, `Gene name`:`Sample name`)
 
 ## Exercise2
 
-Practice using the `select` function 
+Practice using the `select` function to identify particular columns in the dataset. Remember some of the "helper functions" that are available when using select.
 
 <div class="exercise">
 
 - Select the first five, and the last five columns from the table
-- Select all columns that contain information on the tumour Histology (taking into account the different capitalisation)
+- Select the columns that start with "Mutation"
+- Select all columns that contain information on the tumour Histology. There should be four columns.
 
 </div>
 
 
 ## Exercise3
 
-Practice using `filter`
+The `filter` can be used to restrict a data frame to particular rows of interest
 
 <div class="exercise">
 
-Restrict the data to..
+Use `filter` to restrict the rows data to..
 
 - Mutations that occur in the breast or prostate
 - Mutations that occur in patients under 50
-- Mutations in the gene `HFE`
-- Mutations in the ovary or breast that are part of the TCGA dataset (encoded in the `Sample name` column)
 
 </div>
 
-```{r}
-
-
-```
 
 ## Separating columns
+
+You might have noticed that the first column of the data frame comprises both the name of a gene and it's identifier in the [Ensembl database](https://www.ensembl.org/index.html). Representing the data in such a way makes analyses such as counting the number of mutations in a particular gene more complicated than they should be. 
+
+A function to perform this kind of data cleaning can be found in the `tidyr` package.
+
+```{r}
+## check if tidyr package is installed, and install if it isn't
+if(!require("tidyr")) install.packages("tidyr")
+```
+
+The `separate` function takes a data frame as it's first argument and will split a named column into it's component parts. The names of the new columns can be specified. The character (in our case `_`) that is found in the column can also be specified, although it is usually able to detect this automatically.
 
 ```{r}
 library(tidyr)
 separate(cosmic, `Gene name`, into=c("SYMBOL","ENSEMBL"))
 ```
+As usual, we will need to assign the result to a variable if we want to keep this new version of the data.
+
+```{r}
+cosmic <- separate(cosmic, 
+                   `Gene name`, 
+                   into=c("SYMBOL","ENSEMBL"))
+```
+
+Now we can make a barplot of how many mutations are found for each gene
+
+```{r}
+library(ggplot2)
+ggplot(cosmic, aes(x = SYMBOL)) + geom_bar()
+```
+
+## Exercise 4
+
+<div class="exercise">
+- Is the age distribution of patients that have mutations in `NCOR2` or `SELP` different? Use a violin plot to find out?
+- Expand the `count` code above to find the number of mutations in each sample type for the two genes
+- Visualise these counts using a `geom_tile` arrangement (see below for example plot)
+
+</div>
+
+
+
+
+```{r echo=FALSE}
+count(cosmic, SYMBOL, `Primary site`) %>% 
+  ggplot(aes(x = SYMBOL, y=`Primary site`, fill= n)) + geom_tile()
+```
+
 
 ## Exercise4
 
 <div class="exercise">
 
-- Separate the position of the mutation into chromosome start and end
-- Add the text `chr` to the beginning of each chromosome name. Save this as a new variable to be used later
-  + `HINT` look-up the `paste0` function
-
-```{r}
+- Separate the position of the mutation into chromosome start and end columns
+- Arrange the rows according to chromosome and start position
 
 
-```
 
-## Exercise5
 
-- Arrange the mutations in genome position order (chromosome, then start)
-- Look at the output, does it seem to be in the correct order? What might the problem be?
-
-```{r}
-separate(cosmic, `Mutation genome position`, into = c("chromosome","start","end")) %>% 
-  mutate(chromosome = paste0("chr",chromosome)) %>% 
-  arrange(chromosome,start)
-
-```
 
 
 # Clinical data from the TCGA project
@@ -147,7 +168,17 @@ This exercise concerns the clinical descriptions of tumours from The Cancer Geno
 The data can be downloaded using the following code:-
 
 
-The data are provided as the file `tcga_clinical.tsv` in the `raw_data` directory of the `r_crash_course.zip` file
+```{r}
+## create a more_data folder
+
+dir.create("more_data",showWarnings = FALSE)
+
+## will check if the file exists before downloading
+
+if(!file.exists("more_data/tcga_clinical.tsv")) download.file("https://github.com/sheffield-bioinformatics-core/r-online/raw/master/more_data/tcga_clinical.tsv", destfile = "more_data/tcga_clinical.tsv")
+```
+
+
 
 <div class="exercise">
 **Exercise**: What function from `readr` would you use to read the file `tcga_clinical.tsv` into R? Read the file in. What are the number of rows and columns?
@@ -352,6 +383,72 @@ data %>%
   ggplot(aes(x = vital_status, y = freq)) + geom_col() + facet_wrap(~tumor_tissue_site)
 ```
 
+# Palmer Penguins
+
+This fun example concerns a dataset available from:-
+
+https://allisonhorst.github.io/palmerpenguins/
+
+![](https://allisonhorst.github.io/palmerpenguins/reference/figures/lter_penguins.png)
+
+** Artwork by @allison_horst **
+
+```{r}
+## check if package already exists, and if not install from CRAN
+if(!require("palmerpenguins")) install.packages("palmerpenguins")
+```
+
+Once the package is installed, we can load it and `View` the `penguins` dataset, which is included with the package.
+
+```{r}
+library(palmerpenguins)
+View(penguins)
+example("penguins")
+```
+
+```{r}
+count(penguins, species)
+```
+
+<div class="exercise">
+- Is the body mass of male penguins more than female penguins? Use a suitable plot to visualise the data.
+- Is the trend consistent across different species?
+- Use the `summarise` function to calculate the average body mass in males / females for different species
+- Can you remove observations for which no `sex` was recorded from the dataset?
+</div>
+
+```{r}
+ggplot(penguins, aes(x = sex, y = body_mass_g)) + geom_boxplot() + facet_wrap(~species)
+
+group_by(penguins, sex,species) %>%
+  summarise(Weight = mean(body_mass_g))
+
+```
+
+<div class="exercise">
+Is the body mass related to the flipper length? Use an appropriate plot to find out
+</div>
+
+```{r}
+ggplot(penguins, aes(x = flipper_length_mm, y = body_mass_g, col = species)) + geom_point() + geom_smooth(method="lm")
+```
+
+# Machine Learning Examples
+
+```{r}
+if(!require("MLDataR")) install.packages("MLDataR")
+```
 
 
+```{r}
+library(MLDataR)
+```
+
+```{r}
+View(diabetes_data)
+```
+
+```{r}
+ggplot(diabetes_data,aes(x = DiabeticClass, y = Age, fill=Gender)) + geom_boxplot()
+```
 
