@@ -169,6 +169,21 @@ rnorm(10, 2, 3)
 
 In the examples above, `seq` and `rnorm` were both outputting a series of numbers, which is called a *vector* in R and is the most-fundamental data-type.
 
+Just as we can save single numbers as a variable, we can also save a vector. In fact a single number is still a vector.
+
+```{r}
+my_seq <- seq(from = 3, to = 20, by = 4)
+```
+
+The arithmetic operations we have seen can be applied to these vectors; exactly the same as a single number.
+
+```{r}
+my_seq + 2
+```
+```{r}
+my_seq * 2
+```
+
 
 ******
 ******
