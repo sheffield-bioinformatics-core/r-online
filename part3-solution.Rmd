@@ -18,6 +18,18 @@ Read the data and check
 gapminder <- read_csv("raw_data/gapminder.csv")
 head(gapminder)
 ```
+
+
+Use a boxplot to compare the life expectancy values of Australia and New Zealand. Use a `Set2` palette from `RColorBrewer` to colour the boxplots and apply a "minimal" theme to the plot.
+
+```{r}
+gapminder %>% 
+  filter(continent == "Oceania") %>% 
+  ggplot(aes(x = country, y = lifeExp,fill=country)) + geom_boxplot() + scale_fill_manual(values=brewer.pal(2,"Set2")) + theme_bw()
+```
+
+
+
 Summarise the gapminder data in an appropriate manner to produce a plot to show the change in average gdpPercap for each continent over time.
 
 ```{r}
@@ -118,3 +130,14 @@ filter(gapminder, year ==  2007, continent=="Europe") %>%
   ggplot(aes(x = Date, y = country,fill=Cases)) + geom_tile()
   
 ```
+
+```{r}
+filter(covid, Date == "2022-10-06") %>% 
+  right_join(gapminder) %>% 
+  group_by(continent) %>% 
+  arrange(desc(Cases)) %>% 
+  slice(1)
+```
+
+
+

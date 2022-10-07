@@ -198,6 +198,7 @@ my_seq * 2
   - What is the value of `pi` to 3 decimal places?
     + see the help for `round` `?round`
   - How can we a create a sequence from 2 to 20 comprised of 5 equally-spaced numbers?
+    + i.e. not specifying the `by` argument and getting R to work-out the intervals
     + check the help page for seq `?seq`
   - Create a *variable* containing 1000 random numbers with a *mean* of 2 and a *standard deviation* of 3
     + what is the maximum and minimum of these numbers?
@@ -311,6 +312,24 @@ gapminder <- read_csv(gapminder_path)
 
 </div>
 
+<div class="information">
+You can also read excel (`.xls` or `.xlsx`) files into R, but you will have to use the `readxl` package instead.
+
+```{r eval=FALSE}
+install.packages("readxl")
+library(readxl)
+## Replace PATH_TO_MY_XLS with the name of the file you want to read
+data <- read_xls(PATH_TO_MY_XLS)
+## Replace PATH_TO_MY_XLSX with the name of the file you want to read
+data <- read_xlsx(PATH_TO_MY_XLSX)
+```
+
+</div>
+
+
+<div class="information">
+If you get *really* stuck importing data, there is a File -> Import Dataset option that should guide you through the process. It will also show the corresponding R code that you can use in future.
+</div>
 
 The data frame object in R allows us to work with **"tabular" data**, like we might be used to dealing with in Excel, where our data can be thought of having **rows and columns**. The values in **each column** have to all be of the **same type** (i.e. all numbers or all text).
 

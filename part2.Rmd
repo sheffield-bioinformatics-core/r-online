@@ -15,7 +15,10 @@ editor_options:
 
 <img src="images/logo-sm.png" style="position:absolute;top:40px;right:10px;" width="200" />
 
-## Recap
+<div class="warning">
+If you have previously-attended this course and are reviewing the notes, please be aware of some re-organisation of the materials in this section. Some of the later examples have been moved to Part 3.
+</div>
+
 
 We should have loaded the `readr` library and imported an example dataset into R
 
@@ -25,7 +28,7 @@ gapminder <- read_csv("raw_data/gapminder.csv")
 ```
 
 
-# Manipulating data
+## Manipulating Columns
 
 We are going to use functions from the **`dplyr`** package to **manipulate the data frame** we have just created. It is perfectly possible to work with data frames using the functions provided as part of "*base R*". However, many find it easy to read and write code using `dplyr`.
 
@@ -87,7 +90,43 @@ select(gapminder, contains("life"))
 select(gapminder, last_col(1),last_col())
 ```
 
-### Restricting rows with filter
+It is also possible to use the column number in the selection.
+
+```{r}
+select(gapminder, 4:6)
+```
+
+<div class="exercise">
+**Question**: Why might using the number of the column sometimes be problematic? Consider what might happen if you wrote code to select the last column of data from a file using the column number. What would happen if the number of columns in the file was not constant?
+</div>
+
+The `select` function can be used with just a single column name - in a similar manner to the `$` operation we saw last time. However, `select` always returns a *data frame* whereas `$` gives a vector. Compare the output of the following code chunks
+
+```{r}
+select(gapminder, pop)
+```
+
+```{r eval=FALSE}
+gapminder$pop
+```
+
+The consequence of this is that you cannot use functions such as `mean` in combination with `select`
+
+```{r eval=FALSE}
+pops <- select(gapminder, pop)
+mean(pops)
+```
+
+In the next session we will see how to calculate summary statistics on particular columns in our data. For now, a useful function is `pull` that will return the correct type of data required for a function such as `mean`.
+
+```{r}
+pops <- pull(gapminder,pop)
+mean(pops)
+```
+
+
+
+## Restricting rows with filter
 
 So far we have been returning all the rows in the output. We can use what we call a **logical test** to **filter the rows** in a data frame. This logical test will be applied to each row and give either a `TRUE` or `FALSE` result. When filtering, **only rows with a `TRUE` result get returned**.
 
@@ -117,7 +156,7 @@ We can also test if rows are *not* equal to a value using  `!=`
 filter(gapminder, continent != "Europe")
 ```
 
-#### testing more than one condition
+### testing more than one condition
 
 There are a couple of ways of testing for more than one pattern. The first uses an *or* `|` statement. i.e. testing if the value of `country` is `Zambia` *or* the value is `Zimbabwe`. Remember to use double `=` sign to test for string equality; `==`.
 
@@ -140,24 +179,29 @@ We can require that both tests are `TRUE`,  e.g. which years in Zambia had a lif
 filter(gapminder, country == "Zambia", lifeExp < 40)
 ```
 
+<div class="information">
+You may have noticed that `filter` will always output the same number of columns as the input data frame. `filter` never changes the columns that are displayed. There are ways of using `filter` in conjunction with `select` as we will see later.
+</div>
+
 ******
 ******
 ******
 
-#### Exercise
+## Exercise
 <div class="exercise">
 - Create a subset of the data where the population less than a million in the year 2002
 - Create a subset of the data where the life expectancy is greater than 75 in the years prior to 1987
 - Create a subset of the European data where the life expectancy is between 75 and 80 in the years 2002 or 2007.
+- If you are finished with these, try to explore alternative ways of performing the same filtering
 </div>
 ******
 ******
 ******
 
 
-### Manipulating column values
+## Manipulating the values in a column / creating new columns
 
-As well as selecting existing columns in the data frame, new columns can be created and existing ones manipulated using the `mutate` function. Typically a function or mathematical expression is applied to data in existing columns by row, and the result either stored in a new column or reassigned to an existing one. In other words, the number of values returned by the function must be the same as the number of input values. Multiple mutations can be performed in one call.
+As well as selecting existing columns in the data frame, new columns can be created and existing ones manipulated using the `mutate` function. Typically a function or mathematical expression is applied to data in existing columns by row, and the result either stored in a new column or reassigned to an existing one. In other words, the number of values returned by the function must be the same as the number of input values. Multiple mutations can be performed in one line of code.
 
 Here, we create a new column of population in millions (`PopInMillions`) and round `lifeExp` to the nearest integer.
 
@@ -174,7 +218,7 @@ rename(gapminder, GDP=gdpPercap)
 ```
 
 
-### Ordering / sorting
+## Ordering / sorting
 
 The whole data frame can be re-ordered according to the values in one column using the `arrange` function. So to order the table according to population size:-
 
@@ -206,7 +250,7 @@ arrange(gapminder, year, pop)
 arrange(gapminder, year, continent, pop)
 ```
 
-### Saving data frames
+## Saving data frames
 
 A final point on data frames is that we can write them to disk once we have done our data processing. 
 
@@ -231,7 +275,7 @@ We will now try an exercise that involves using several steps of these operation
 ******
 ******
 
-#### Exercise
+## Exercise
 <div class="exercise">
 - Filter the data to include just observations from the year 2002
 - Re-arrange the table so that the countries from each continent are ordered according to decreasing wealth. i.e. the wealthiest countries first
@@ -250,7 +294,7 @@ We will now try an exercise that involves using several steps of these operation
 ******
 
 
-### "Piping"
+## "Piping"
 
 As have have just seen, we will often need to perform an analysis, or clean a dataset, using several `dplyr` functions in sequence. e.g. filtering, mutating, then selecting columns of interest (possibly followed by plotting - see shortly).
 
@@ -276,7 +320,6 @@ filter(gapminder, continent=="Europe") %>%
   select(-continent)
 ```
 
-We can join as many `dplyr` functions as we require for the analysis.
 
 ******
 ******
@@ -497,119 +540,6 @@ When used in the construction of a boxplot, the `col` argument will change the c
 
 ```{r}
 ggplot(gapminder, aes(x = continent, y=gdpPercap,fill=continent)) + geom_boxplot()
-```
-
-
-The shape and size of points can also be mapped from the data. However, it is easy to get carried away.
-
-```{r}
-ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,shape=continent,size=pop)) + geom_point()
-```
-
-Scales and their legends have so far been handled using `ggplot2` defaults. `ggplot2` offers functionality to have finer control over scales and legends using the scale methods.
-
-Scale methods are divided into functions by combinations of
-
-- the aesthetics they control.
-
-- the type of data mapped to scale.
-
-`scale_`*aesthetic*_*type*
-
-Try typing in `scale_` then tab to autocomplete. This will provide some examples of the scale functions available in `ggplot2`.
-
-Although different scale functions accept some variety in their arguments, common arguments to scale functions include -
-
-- name - The axis or legend title
-
-- limits - Minimum and maximum of the scale
-
-- breaks - Label/tick positions along an axis
-
-- labels - Label names at each break
-
-- values - the set of aesthetic values to map data values
-
-We can choose specific colour palettes, such as those provided by the `RColorBrewer` package. This package provides palettes for different types of scale (sequential, diverging, qualitative).
-
-
-```{r}
-library(RColorBrewer)
-display.brewer.all(colorblindFriendly = TRUE)
-```
-
-<div class="warning">
-**When creating a plot, always check that the colour scheme is appropriate for people with various forms of colour-blindness**
-</div>
-
-When experimenting with colour palettes and labels, it is useful to save the plot as an object
-```{r}
-p <- ggplot(gapminder, aes(x = gdpPercap, y=lifeExp,col=continent)) + geom_point()
-```
-
-
-```{r}
-# We can also change the text displayed above the legend with the name parameter.
-p + scale_color_manual(values=brewer.pal(6,"Set2"))
-```
-
-Or we can even specify our own colours; such as The University of Sheffield branding colours
-
-```{r}
-my_pal <- c(rgb(0,159,218,maxColorValue = 255),
-            rgb(31,20,93,maxColorValue = 255),
-            rgb(249,227,0,maxColorValue = 255),
-            rgb(0,155,72,maxColorValue = 255),
-            rgb(190,214,0,maxColorValue = 255))
-p + scale_color_manual(values=my_pal)
-
-```
-**NEW**:- A set of palettes based on works in the Metropolitan Museum of Art (New York) has been made available.
-
-https://github.com/BlakeRMills/MetBrewer
-
-```{r}
-## this will check if MetBrewer is already installed, and will only install if it is not found
-
-if(!require("MetBrewer")) install.packages("MetBrewer")
-library(MetBrewer)
-p + scale_color_manual(values=met.brewer(name = "Greek"))
-```
-
-
-
-Various labels can be modified using the `labs` function.
-
-```{r}
-p + labs(x="Wealth",y="Life Expectancy",title="Relationship between Wealth and Life Expectancy")
-```
-
-We can also modify the x- and y- limits of the plot so that any outliers are not shown. `ggplot2` will give a warning that some points are excluded.
-
-```{r}
-p + xlim(0,60000)
-```
-
-Saving is supported by the `ggsave` function. A variety of file formats are supported (`.png`, `.pdf`, `.tiff`, etc) and the format used is determined from the extension given in the `file` argument. The height, width and resolution can also be configured. See the help on `ggsave` (`?ggsave`) for more information.
-
-```{r}
-ggsave(p, file="my_ggplot.png")
-```
-
-Most aspects of the plot can be modified from the background colour to the grid sizes and font. Several pre-defined "themes" exist and we can modify the appearance of the whole plot using a `theme_..` function.
-
-```{r}
-p + theme_bw()
-```
-
-More themes are supported by the `ggthemes` package. You can make your plots look like the Economist, Wall Street Journal or Excel (**but please don't do this!**)
-
-```{r}
-## this will check if ggthemes is already installed, and will only install if it is not found
-
-if(!require("ggthemes")) install.packages("ggthemes")
-library(ggthemes)
-p + theme_excel()
 ```
 
 
