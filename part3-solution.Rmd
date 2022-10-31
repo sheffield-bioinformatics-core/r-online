@@ -23,6 +23,7 @@ head(gapminder)
 Use a boxplot to compare the life expectancy values of Australia and New Zealand. Use a `Set2` palette from `RColorBrewer` to colour the boxplots and apply a "minimal" theme to the plot.
 
 ```{r}
+library(RColorBrewer)
 gapminder %>% 
   filter(continent == "Oceania") %>% 
   ggplot(aes(x = country, y = lifeExp,fill=country)) + geom_boxplot() + scale_fill_manual(values=brewer.pal(2,"Set2")) + theme_bw()
@@ -59,7 +60,7 @@ library(tidyr)
 Download the Covid dataset and tidy
 
 ```{r}
-download.file("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",destfile = "time_series_covid19_confirmed_global.csv")
+download.file("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv",destfile = "raw_data/time_series_covid19_confirmed_global.csv")
 
 covid <- read_csv("raw_data/time_series_covid19_confirmed_global.csv") %>% 
   rename(country = `Country/Region`) %>% 
@@ -132,11 +133,18 @@ filter(gapminder, year ==  2007, continent=="Europe") %>%
 ```
 
 ```{r}
-filter(covid, Date == "2022-10-06") %>% 
-  right_join(gapminder) %>% 
+## find out the last data in the covid dataset
+
+latest_date <- pull(covid,Date) %>% max
+
+filter(gapminder, year == 2007) %>% 
+  select(country, continent) %>%   right_join(covid) %>% 
+filter(Date == latest_date) %>% 
   group_by(continent) %>% 
   arrange(desc(Cases)) %>% 
   slice(1)
+##slice(1) returns the first row
+
 ```
 
 
