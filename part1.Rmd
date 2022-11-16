@@ -24,19 +24,7 @@ Although R is well-regarded as a tool for performing statistical analysis, this 
 
 </div>
 
-# Using these notes
 
-<div class="exercise">
-Sections with this background indicate exercises to be completed during the workshop.
-</div>
-
-<div class="information">
-Sections with this background highlight particular shortcuts or other references that might be useful.
-</div>
-
-<div class="warning">
-Sections with this background give information about potential error messages or might encounter, or problems that might arise in your own data analysis.
-</div>
 
 # Entering commands in R
 
