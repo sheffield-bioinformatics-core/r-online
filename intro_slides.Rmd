@@ -91,8 +91,8 @@ gapminder::gapminder %>% filter(country %in% c("Zambia","Rwanda","Zimbabwe","Uni
 
 ## Course Outline
 
-- Session 1:- RStudio and R basis
-- Session 2:- Reading data into R, data manipulation and plotting
+- Session 1:- RStudio and R basis, reading data into R
+- Session 2:- Data manipulation and plotting
 - Session 3:- Further plotting, Summarising, joining tables and open-ended practice
 
 ## Resources
@@ -107,6 +107,5 @@ gapminder::gapminder %>% filter(country %in% c("Zambia","Rwanda","Zimbabwe","Uni
 
 ## Thanks
 
-- Materials at https://sbc.shef.ac.uk/training/r-introduction-online/
 - Find this useful? Tell your colleagues and mention us on twitter
   + `@SheffBioinfCore`
