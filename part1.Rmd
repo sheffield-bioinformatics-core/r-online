@@ -15,28 +15,75 @@ editor_options:
 
 # Acknowledgement
 
-These materials are adapted from a course developed at Cancer Research Uk Cambridge Institute by Mark Dunning, Matthew Eldridge and Thomas Carroll.
+If you find these materials useful for your research, please consider acknowledging the Sheffield Bioinformatics Core in any outputs that arise from having learnt R. You can contact us for support on specific projects using:- `bioinformatics-core@sheffield.ac.uk`
 
-# Aims and objectives
+# Disclaimer
 
 <div class="warning">
 Although R is well-regarded as a tool for performing statistical analysis, this workshop will not explicitly teach stats. Instead we give introduce the tools that we allow you to manipulate and interrogate your data into a form with which you can execute statistical tests.
 
 </div>
 
-# Using these notes
+# Setup
 
-<div class="exercise">
-Sections with this background indicate exercises to be completed during the workshop.
-</div>
+If you are following these notes independently (outside one of our workshops) 
 
-<div class="information">
-Sections with this background highlight particular shortcuts or other references that might be useful.
-</div>
 
-<div class="warning">
-Sections with this background give information about potential error messages or might encounter, or problems that might arise in your own data analysis.
-</div>
+From the RStudio menus, Choose the **File** -> **New Project** option and select New Directory from the new window
+
+![](images/new_proj1.png)
+
+Then for the **Project Type** pick New Project.  
+
+![](images/new_proj2.png)
+
+
+
+It will ask you to pick a new Directory name, and where to create that directory (e.g. your Home directory or directory where you usually save your work)
+
+![](images/new_proj3.png)
+
+RStudio should now refresh itself. You can now download the data required for the workshop by copying and pasting the following into the R console (as shown in the screenshot)
+
+```{r}
+download.file("https://github.com/sheffield-bioinformatics-core/r-online/raw/master/CourseData.zip", destfile = "CourseData.zip")
+```
+
+![](images/data_download.png)
+The files from the zip file can be extracted using the command:-
+
+```{r}
+unzip("CourseData.zip")
+```
+
+Your RStudio screen should look like:-
+
+![](images/data_download_2.png)
+
+
+
+You will need to install some R packages and download some data before you start. You can install the packages by copying and pasting the following into an R console and pressing ENTER
+
+```{r}
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("readr")
+install.packages("rmarkdown")
+install.packages("tidyr")
+```
+
+You can check that this worked by copying and pasting the following:-
+
+```{r}
+source("https://raw.githubusercontent.com/sheffield-bioinformatics-core/r-online/master/check_packages.R")
+```
+
+
+If you want to follow along with the R code on this webpage, you can open the file `part1.Rmd` from the bottom-right corner of RStudio
+
+![](images/find_markdown.png)
+
+There are equivalent markdown files (`part2.Rmd`, `part3.Rmd`) for the other sections of the course. Enjoy!
 
 # Entering commands in R
 
@@ -421,7 +468,7 @@ You will probably want to create a new *R notebook* file to perform your analysi
 
 A new pane should open that includes some example code. You can delete everything **apart from lines 1 to 4**
 
-![](images/blank_notebook.png)
+![](images/blank_notebook.PNG)
 
 You can now insert R code chunks using the insert menu.
 
