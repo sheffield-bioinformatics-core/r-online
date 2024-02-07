@@ -39,6 +39,14 @@ Create a subset of the European data where the life expectancy is between 75 and
 ```{r}
 filter(gapminder, continent == "Europe", lifeExp > 75, lifeExp < 80 , year == 2002 | year == 2007)
 ```
+Can also use the `between` function from `dplyr` and the `%in%` function
+
+```{r}
+filter(gapminder, continent == "Europe", 
+       between(lifeExp, 75,80), 
+       year %in% c(2002,2007))
+```
+
 
 Write a workflow to do the following:- 
 
