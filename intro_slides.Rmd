@@ -14,12 +14,6 @@ knitr::opts_chunk$set(echo = FALSE)
 
 ![](images/NYTimes_R_Article.png)
 
-## Powerful data manipulation and graphics capabilities
-
-<img src="https://cdn-images-2.medium.com/max/1200/1*BTMbVFh_hziJJcaQ7TBRwg.png" style="width: 100%; display: block; margin-left: auto; margin-right: auto;"/>
-
-
-
 ## Notable uses
 
 - [Facebook](http://blog.revolutionanalytics.com/2010/12/analysis-of-facebook-status-updates.html),
@@ -39,11 +33,11 @@ knitr::opts_chunk$set(echo = FALSE)
 ## Topics covered
 
 - The Rstudio environment
+- Reproducible Reporting
 - Importing data from a spreadsheet
 - Filtering Data
-- Plotting
+- Plotting and customisation of plots
 - Calculating numerical summaries
-- Reporting
 - Joining data from multiple spreadsheets
 
 ## Packages covered
@@ -91,7 +85,7 @@ gapminder::gapminder %>% filter(country %in% c("Zambia","Rwanda","Zimbabwe","Uni
 
 ## Course Outline
 
-- Session 1:- RStudio and R basis, reading data into R
+- Session 1:- RStudio and R basis, Reading data into R
 - Session 2:- Data manipulation and plotting
 - Session 3:- Further plotting, Summarising, joining tables and open-ended practice
 
@@ -107,5 +101,6 @@ gapminder::gapminder %>% filter(country %in% c("Zambia","Rwanda","Zimbabwe","Uni
 
 ## Thanks
 
+- Materials at https://sbc.shef.ac.uk/training/r-introduction-online/
 - Find this useful? Tell your colleagues and mention us on twitter
   + `@SheffBioinfCore`
