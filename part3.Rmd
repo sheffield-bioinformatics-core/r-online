@@ -87,12 +87,24 @@ p + scale_color_manual(values=brewer.pal(6,"Set2"))
 Or we can even specify our own colours; such as The University of Sheffield branding colours
 
 ```{r}
-my_pal <- c(rgb(0,159,218,maxColorValue = 255),
-            rgb(31,20,93,maxColorValue = 255),
-            rgb(249,227,0,maxColorValue = 255),
-            rgb(0,155,72,maxColorValue = 255),
-            rgb(190,214,0,maxColorValue = 255))
-p + scale_color_manual(values=my_pal)
+
+uos_colours <- c("#440099","#9ADBE8","#131E29",
+                 "#005A8F",
+                 "#00BBCC",
+                 "#64CBE8",
+                 "#00CE7C",
+                 "#3BD4AE",
+                 "#A1DED2",
+                 "#663DB3",
+                 "#981F92",
+                 "#DAA8E2",
+                 "#E7004C",
+                 "#FF6371",
+                 "#FF9664"
+)
+
+uos_colours <- as.character(uos_colours)
+p + scale_color_manual(values=uos_colours)
 
 ```
 
