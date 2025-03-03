@@ -101,6 +101,6 @@ gapminder::gapminder %>% filter(country %in% c("Zambia","Rwanda","Zimbabwe","Uni
 
 ## Thanks
 
-- Materials at https://sbc.shef.ac.uk/training/r-introduction-online/
+- Materials at https://sbc.shef.ac.uk/training/r-online/
 - Find this useful? Tell your colleagues and mention us on twitter
   + `@SheffBioinfCore`
